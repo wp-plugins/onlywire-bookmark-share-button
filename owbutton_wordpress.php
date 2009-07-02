@@ -6,7 +6,7 @@ Plugin Name: OnlyWire Button
 function ow_function($text) {
     global $post;
 
-    $text .= '<script type="text/javascript" class="owbutton" src="http://www.onlywire.com/button" title="'.$post->post_title.'" url="'.$post->guid.'"></script>';
+    $text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/button" title="'.$post->post_title.'" url="'.$post->guid.'"></script>';
     return $text;
 }
 
