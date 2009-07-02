@@ -22,8 +22,10 @@ OnlyWire's service has a proven and exponentially positive impact on your backli
 
 == Installation ==
 
-1. Upload `owbutton_wordpress.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Download `onlywire-bookmark-share-button.zip`
+1. Unzip
+1. Upload the `onlywire-bookmark-share-button` directory to your `/wp-content/plugins/` directory
+1. Go to the Plugin management page in your Wordpress admin site and enable the plugin
 
 == Frequently Asked Questions ==
 
@@ -42,10 +44,10 @@ OnlyWire is the only service which auto-submits content to multiple sites simult
 == Coming Soon ==
 
 We have big plans for the Wordpress plugin, including:
-1. Button customization (colors, sizes, fonts and target sites)
-1. Auto-submitting posts when they go live
-1. Addition of more target networking sites 
-1. iPhone and Android app
+Button customization (colors, sizes, fonts and target sites),
+Auto-submitting posts when they go live,
+Addition of more target networking sites ,
+iPhone and Android app
 
 == Screenshots ==
 
