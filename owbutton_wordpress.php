@@ -1,6 +1,11 @@
 <?php
 /*
-Plugin Name: OnlyWire Button
+Plugin Name: OnlyWire Bookmark & Share Button (Official Plugin)
+Plugin URI: http://wordpress.org/extend/plugins/onlywire-bookmark-share-button/
+Description: Auto-submit your posts to over 20 social networks with one click 
+Version: 1.0
+Author: OnlyWire Engineering Team 
+Author URI: http://onlywire.com
 */
 
 function ow_function($text) {
