@@ -1,24 +1,24 @@
 === Plugin Name ===
 Contributors: craiglurey 
-Donate link: http://onlywire.com/
-Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter
+Donate link: https://onlywire.com/signup 
+Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter, addthis, sharethis, digg, reddit, stumbleupon, facebook, twitter, plaxo 
 Requires at least: 0.71-gold
 Tested up to: 2.8
 Stable tag: trunk 
 
-OnlyWire auto-submits your blog posts to over 20 social networking sites *simultaneously* with one button click.  Increases traffic and backlinks.
+OnlyWire syndicates your blog posts to over 20 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
 
 == Description ==
 
-OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 20 social networking sites at once -- including Digg, Reddit, StumbleUpon and many others. 
+OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 20 social networking sites at once -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
 
-When you download and activate the OnlyWire Wordpress Plugin, a "Bookmark & Share" button will instantly appear underneath each of your blog posts.  When you mouse-over the button, it will expand to provide you and your readers a quick way to share your post with over 20 different social networks.  
+When you download and activate the OnlyWire Wordpress Plugin, a "Bookmark & Share" button will instantly appear underneath each of your blog posts.  When you mouse-over the button, it will expand to provide you and your readers an easy way to share your post with dozens of social networks.
 
-**Here's the magic part** - When you create a free OnlyWire account and set up your social networking site logins, OnlyWire will submit your post to all of the sites simultaneously.  OnlyWire does all of the submission behind the scenes on behalf of you.  When your readers use OnlyWire, they can also auto-submit to all of **their** networking sites.
+**Here's the magic part** - When you create a free OnlyWire account and set up your social networking site logins, OnlyWire will submit your post to all of the sites simultaneously.  OnlyWire does all of the submission behind the scenes on behalf of you.  When your readers use OnlyWire, they can also auto-submit to all of **their** networking sites.  Sign up for a free account at [https://onlywire.com/signup](https://onlywire.com/signup "Signup Page").
 
-OnlyWire's service has a proven and exponentially positive impact on your backlinks, site traffic and search engine index speed.  [Thousands of articles have been written about OnlyWire's service](http://blogsearch.google.com/blogsearch?hl=en&ie=UTF-8&q=onlywire&um=1&sa=N&start=240 "Click to open a google blog search on OnlyWire").
+OnlyWire's service has a proven and exponentially positive impact on your backlinks, site traffic and search engine index speed.  [Thousands of articles have been written about OnlyWire's service](http://blogsearch.google.com/blogsearch?hl=en&ie=UTF-8&q=onlywire&um=1&sa=N&start=240 "Click to open a google search on OnlyWire").
 
-**OnlyWire is a serious company with serious people working hard to add value to your blog.  Therefore your privacy and security are taken very seriously.  All passwords are saved via SSL encryption and your information is not shared with any 3rd party.**
+**OnlyWire is a serious company with serious people working hard to add value to your blog.  Your privacy and security are taken very seriously.  All passwords are saved via SSL encryption and your information is not shared with any 3rd parties.**
 
 == Installation ==
 
@@ -42,15 +42,15 @@ OnlyWire is the only service which auto-submits content to multiple sites simult
 == Coming Soon ==
 
 We have big plans for the Wordpress plugin, including:
-* Button customization 
-* Auto-submitting posts when they go live
-* Addition of more target networking sites 
+1. Button customization (colors, sizes, fonts and target sites)
+1. Auto-submitting posts when they go live
+1. Addition of more target networking sites 
+1. iPhone and Android app
 
 == Screenshots ==
 
-1. Example blog post with the OnlyWire Bookmark & Share Button underneath (button expands on mouse-over)
-the directory of the stable readme.txt, so in this case, `/tags/4.3/screenshot-1.png` (or jpg, jpeg, gif)
-2. Create an account at OnlyWire.com and set up your preferred social network sites.  The next time you submit a post, OnlyWire will auto-submit your content to all of your sites simultaneously.  Any sites that require extra steps (such as captcha) are completed via a process we call "Finalization".  This is a streamlined process in which you can submit all of your captcha responses in one page. 
+1. Example blog post with the OnlyWire Bookmark & Share Button activated (Button will expand upon mouse-over)
+2. After you create your account on OnlyWire.com, you can set up your preferred social network sites.  The next time you submit a post, OnlyWire will auto-submit your content to all of your sites simultaneously.  Any sites that require extra steps (such as captcha) are completed via a process we call "Finalization".  This is a streamlined process in which you can submit all of your captcha responses in one page. 
 
 == Changelog ==
 
@@ -59,4 +59,3 @@ the directory of the stable readme.txt, so in this case, `/tags/4.3/screenshot-1
 
 = 0.0 =
 * Published first version but with bad version number 
-
