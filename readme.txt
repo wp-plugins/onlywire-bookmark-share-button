@@ -16,7 +16,7 @@ When you download and activate the OnlyWire Wordpress Plugin, a "Bookmark & Shar
 
 **Here's the magic part** - When you create a free OnlyWire account and set up your social networking site logins, OnlyWire will submit your post to all of the sites simultaneously.  OnlyWire does all of the submission behind the scenes on behalf of you.  When your readers use OnlyWire, they can also auto-submit to all of **their** networking sites.  Sign up for a free account at [https://onlywire.com/signup](https://onlywire.com/signup "Signup Page").
 
-OnlyWire's service has a proven and exponentially positive impact on your backlinks, site traffic and search engine index speed.  [Thousands of articles have been written about OnlyWire's service](http://blogsearch.google.com/blogsearch?hl=en&ie=UTF-8&q=onlywire&um=1&sa=N&start=240 "Click to open a google search on OnlyWire").
+OnlyWire's service has a proven and exponentially positive impact on your backlinks, site traffic and search engine index speed.  [Thousands of articles have been written about OnlyWire's service](http://blogsearch.google.com/blogsearch?hl=en&ie=UTF-8&q=onlywire&um=1&sa=N&start=0 "Click to open a google search on OnlyWire").
 
 **OnlyWire is a serious company with serious people working hard to add value to your blog.  Your privacy and security are taken very seriously.  All passwords are saved via SSL encryption and your information is not shared with any 3rd parties.**
 
