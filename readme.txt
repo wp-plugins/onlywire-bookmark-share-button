@@ -31,7 +31,7 @@ OnlyWire's service has a proven and exponentially positive impact on your backli
 
 = How can I change the look and feel of the Button? =
 
-We are working on a feature to modify the look and feel of the Button.  Make sure you sign up for a free account at [https://onlywire.com/signup](https://onlywire.com/signup "Signup Page") so we can notify you as soon as this becomes available.
+Visit [http://onlywire.com/thebutton](http://onlywire.com/thebutton "The Button Page") and you can customize your own button - colors, fonts, sizes, etc...
 
 = Is this free? =
 
@@ -44,7 +44,6 @@ OnlyWire is the only service which auto-submits content to multiple sites simult
 == Coming Soon ==
 
 We have big plans for the Wordpress plugin, including:
-Button customization (colors, sizes, fonts and target sites),
 Auto-submitting posts when they go live,
 Addition of more target networking sites ,
 iPhone and Android app
@@ -55,6 +54,9 @@ iPhone and Android app
 2. After you create your account on OnlyWire.com, you can set up your preferred social network sites.  The next time you submit a post, OnlyWire will auto-submit your content to all of your sites simultaneously.  Any sites that require extra steps (such as captcha) are completed via a process we call "Finalization".  This is a streamlined process in which you can submit all of your captcha responses in one page. 
 
 == Changelog ==
+
+= 1.1 =
+* The URL submitted to OnlyWire is now the full permalink 
 
 = 1.0 =
 * Repaired missing readme file and version
