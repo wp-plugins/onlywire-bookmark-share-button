@@ -6,11 +6,11 @@ Requires at least: 0.71-gold
 Tested up to: 2.8
 Stable tag: trunk 
 
-OnlyWire syndicates your blog posts to over 20 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
+OnlyWire syndicates your blog posts to over 30 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
 
 == Description ==
 
-OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 20 social networking sites at once -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
+OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 30 social networking sites at once -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
 
 When you download and activate the OnlyWire Wordpress Plugin, a "Bookmark & Share" button will instantly appear underneath each of your blog posts.  When you mouse-over the button, it will expand to provide you and your readers an easy way to share your post with dozens of social networks.
 
@@ -31,7 +31,7 @@ OnlyWire's service has a proven and exponentially positive impact on your backli
 
 = How can I change the look and feel of the Button? =
 
-Visit [http://onlywire.com/thebutton](http://onlywire.com/thebutton "The Button Page") and you can customize your own button - colors, fonts, sizes, etc...
+Visit the Settings->OnlyWire tab in your Wordpress admin tool.  You will see the ability to customize the look and feel of your Button - colors, fonts, sizes, etc...
 
 = Is this free? =
 
@@ -43,10 +43,7 @@ OnlyWire is the only service which auto-submits content to multiple sites simult
 
 == Coming Soon ==
 
-We have big plans for the Wordpress plugin, including:
-Auto-submitting posts when they go live,
-Addition of more target networking sites ,
-iPhone and Android app
+Send us your feedback and we'll add more features!
 
 == Screenshots ==
 
@@ -54,6 +51,9 @@ iPhone and Android app
 2. After you create your account on OnlyWire.com, you can set up your preferred social network sites.  The next time you submit a post, OnlyWire will auto-submit your content to all of your sites simultaneously.  Any sites that require extra steps (such as captcha) are completed via a process we call "Finalization".  This is a streamlined process in which you can submit all of your captcha responses in one page. 
 
 == Changelog ==
+
+= 1.2 =
+* You can now auto-submit your Wordpress posts to OnlyWire automatically from the Posting screen.  You can also now customize the look and feel of your Button from within the Wordpress admin tool
 
 = 1.1 =
 * The URL submitted to OnlyWire is now the full permalink 
