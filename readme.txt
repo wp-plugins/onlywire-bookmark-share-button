@@ -49,6 +49,8 @@ Send us your feedback and we'll add more features!
 
 1. Example blog post with the OnlyWire Bookmark & Share Button activated (Button will expand upon mouse-over)
 2. After you create your account on OnlyWire.com, you can set up your preferred social network sites.  The next time you submit a post, OnlyWire will auto-submit your content to all of your sites simultaneously.  Any sites that require extra steps (such as captcha) are completed via a process we call "Finalization".  This is a streamlined process in which you can submit all of your captcha responses in one page. 
+3. When you add a new post to your Wordpress blog, you will see a new checkbox that allows you to instantly publish the post to your OnlyWire account and syndicate it to over 30 social networks.
+4. Under your Wordpress settings bar, you will see OnlyWire Options which allows you to change the look and feel of your Button that appears under articles.
 
 == Changelog ==
 
