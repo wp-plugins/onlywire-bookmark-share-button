@@ -54,6 +54,9 @@ Send us your feedback and we'll add more features!
 
 == Changelog ==
 
+= 1.3 =
+* Fixed bug in the wordpress package (404 error) 
+
 = 1.2 =
 * You can now auto-submit your Wordpress posts to OnlyWire automatically from the Posting screen.  You can also now customize the look and feel of your Button from within the Wordpress admin tool
 

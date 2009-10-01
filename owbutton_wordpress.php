@@ -198,7 +198,7 @@ function func() {
     
     // call the local buttonid.php (ajax) file to make a request with the data from the form to onlywire, and get back the buttonid
     var s = serialize(buttonform);
-    var myRequest = new ajaxObject("<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire/buttonid.php", processData);
+    var myRequest = new ajaxObject("<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire-bookmark-share-button/buttonid.php", processData);
     myRequest.update(s);  // Server is contacted here.
 }
     </script>
@@ -225,7 +225,7 @@ function func() {
 
 				
 			</table>
-            <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
+            <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/frame.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
 			<input type="hidden" name="action" value="update" />
 			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_script" />
