@@ -54,7 +54,7 @@ function ow_adminInit()
 	if( function_exists("add_meta_box") )
 		add_meta_box("onlywire-post", "OnlyWire", "ow_posting", "post", "advanced");
 	
-	add_options_page('OnlyWire Options', 'OnlyWire Options', 8, 'onlywireoptions', 'ow_optionsAdmin');
+	add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
 }
 
 function ow_optionsAdmin()
@@ -203,7 +203,7 @@ function func() {
 }
     </script>
 	<div class="wrap">
-	<h2>OnlyWire Options</h2>
+	<h2>OnlyWire Settings</h2>
 	
 		<form id="ow_form" method="post" action="options.php" onsubmit="func(); return false;">
 			<?php wp_nonce_field('update-options'); ?>
@@ -225,7 +225,7 @@ function func() {
 
 				
 			</table>
-            <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/frame.php"?>" style="width: 100%; height: 710px;" ></iframe>
+            <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
 			<input type="hidden" name="action" value="update" />
 			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_script" />

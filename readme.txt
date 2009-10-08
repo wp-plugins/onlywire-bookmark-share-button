@@ -54,6 +54,9 @@ Send us your feedback and we'll add more features!
 
 == Changelog ==
 
+= 1.4 =
+* The button customization page in your wordpress admin was not being shown properly. Sorry, we just fixed this.  Please update your plugin. 
+
 = 1.3 =
 * Fixed bug in the wordpress package (404 error) 
 
