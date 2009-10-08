@@ -4,7 +4,7 @@ Donate link: https://onlywire.com/signup
 Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter, addthis, sharethis, digg, reddit, stumbleupon, facebook, twitter, plaxo 
 Requires at least: 0.71-gold
 Tested up to: 2.8
-Stable tag: trunk 
+Stable tag: 1.4 
 
 OnlyWire syndicates your blog posts to over 30 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
 
@@ -43,7 +43,7 @@ OnlyWire is the only service which auto-submits content to multiple sites simult
 
 == Coming Soon ==
 
-Send us your feedback and we'll add more features!
+Send us your feedback [http://onlywire.com/contact](http://onlywire.com/contact "From Our Contact Page") and we'll add more features!
 
 == Screenshots ==
 
