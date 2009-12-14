@@ -3,9 +3,9 @@
 Plugin Name: OnlyWire for WordPress
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 0.1
-Author: ...
-Author URI: http://
+Version: 1.5
+Author: OnlyWire Engineering
+Author URI: http://onlywire.com/
 */
 
 $wpURL = get_bloginfo('wpurl');
@@ -40,6 +40,7 @@ function ow_activate()
 	
 	add_option('ow_username');
 	add_option('ow_password');
+	add_option('ow_autopost');
 	add_option('ow_script');
 }
 
@@ -47,7 +48,14 @@ function ow_activate()
  * Post admin hooks
  */
 add_action('admin_menu', "ow_adminInit");
-add_action('save_post', 'ow_post');
+add_action('publish_post', 'ow_post');
+add_filter( 'plugin_action_links', 'ow_settings_link', 9, 2 );
+//Add a link to settings on the plugin listings page
+function ow_settings_link( $links ) {
+	$settings_link = '<a href="options-general.php?page=onlywireoptions">'.__( 'Settings' ).'</a>';
+	array_unshift( $links, $settings_link );
+	return $links;
+}
 
 function ow_adminInit()
 {
@@ -222,13 +230,18 @@ function func() {
 					<td><input id="ow_password" type="text" name="ow_password" value="<?php echo get_option('ow_password'); ?>" /></td>
 					<td style="width:100%;">The password you use to login on OnlyWire.com.</td>
 				</tr>
+				<tr valign="top">
+					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost"><?php _e("Auto Post All Articles"); ?>:</label></th>
+					<td style="vertical-align: bottom;"><input id="ow_autopost" type="checkbox" name="ow_autopost" <?php if(get_option('ow_autopost') == 'on') { echo 'checked="true"'; }?> /></td>
+					<td style="width:100%;"></td>
+				</tr>
 
 				
 			</table>
             <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
 			<input type="hidden" name="action" value="update" />
-			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_script" />
+			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_autopost,ow_script" />
 	
 			<p class="submit">
 				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -248,9 +261,19 @@ function ow_posting()
 	global $post_ID;
 ?>
     <label for="ow_post">
-        <input type="checkbox" checked="true" id="ow_post" name="ow_post" /> Post this to OnlyWire	
+        <input type="checkbox" <?php if(get_option('ow_autopost') == 'on') { echo 'checked="true"';}?> id="ow_post" name="ow_post" /> Post this to OnlyWire	
     </label>
 <?php
+}
+
+/**
+ * Return a random tag if none are supplied in the post
+ */
+function getDefaultTag() {
+    $tags = array("bookmark","favorite","blog","social","web","internet","share","organize","manage","reference","tag","save");
+    $rand_keys = array_rand($tags,2);
+    
+    return $tags[$rand_keys[0]];
 }
 
 /**
@@ -278,9 +301,9 @@ function ow_post( $postID )
             $data['token'] = implode('%26', $password);
 
             // get the services
-            $gservices = file_get_contents("http://onlywire.com/widget/getWidgetData.php?token=".$data['token']);
+            $gservices = GetRequest("http://onlywire.com/widget/getWidgetData.php?token=".$data['token']);
             // gservices is not "jsonp(..);" let's remove "jsonp(" and ");"
-            $gservices = str_replace('jsonp(','',$gservices);
+            $gservices = str_replace('jsonp(','',$gservices[1]);
             $gservices = str_replace(');','',$gservices);
             $jservices = json_decode($gservices);
 
@@ -295,13 +318,16 @@ function ow_post( $postID )
 
             $post = get_post($postID); 
             $tags = get_the_tags($postID);
-            $tagarr = array();
-            // build tags string
-            foreach($tags as $tag) {
-                array_push($tagarr, $tag->name);
+            if($tags) {
+                 $tagarr = array();
+                 // build tags string
+                 foreach($tags as $tag) {
+                     array_push($tagarr, $tag->name);
+                 }
+                 $tagstring = implode(' ', $tagarr);
+            } else {
+                   $tagstring = getDefaultTag();
             }
-            $tagstring = implode(' ', $tagarr);
-
             $data['url'] = $post->guid; 
             $data['title'] = $post->post_title;
             $data['tags'] = $tagstring;
