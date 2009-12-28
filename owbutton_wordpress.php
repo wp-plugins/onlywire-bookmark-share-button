@@ -3,9 +3,9 @@
 Plugin Name: OnlyWire for WordPress
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 0.1
-Author: ...
-Author URI: http://
+Version: 1.6
+Author: OnlyWire Engineering
+Author URI: http://onlywire.com/
 */
 
 $wpURL = get_bloginfo('wpurl');
@@ -37,22 +37,39 @@ register_activation_hook(__FILE__, 'ow_activate');
 function ow_activate()
 {
 	global $wpdb;
-	
 	add_option('ow_username');
 	add_option('ow_password');
-	add_option('ow_script');
+        add_option('ow_autopost');
+        add_option('ow_autopost_revisions');
+        add_option('ow_script');
 }
 
 /**
  * Post admin hooks
  */
 add_action('admin_menu', "ow_adminInit");
-add_action('save_post', 'ow_post');
+add_action('publish_post', 'ow_post');
+add_filter( 'plugin_action_links', 'ow_settings_link', 10, 2 );
+
+/**
+ * Adds an action link to the Plugins page
+ */
+function ow_settings_link($links, $file){
+	static $this_plugin;
+ 
+	if( !$this_plugin ) $this_plugin = plugin_basename(__FILE__);
+ 
+	if( $file == $this_plugin ){
+		$settings_link = '<a href="options-general.php?page=onlywireoptions">' . __('Settings') . '</a>';
+		$links = array_merge( array($settings_link), $links); // before other links
+	}
+	return $links;
+}
 
 function ow_adminInit()
 {
 	if( function_exists("add_meta_box") )
-		add_meta_box("onlywire-post", "OnlyWire", "ow_posting", "post", "advanced");
+		add_meta_box("onlywire-post", "OnlyWire Bookmark &amp; Share", "ow_posting", "post", "normal", "high");
 	
 	add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
 }
@@ -188,6 +205,16 @@ function processData(responseText) {
     document.getElementById("ow_form").submit();
 }
 
+/**
+ * Verify the user wants to turn on the "Auto Post All Article Revisions" option -- it is recommended to leave this turned off
+ */
+function verifyAutoRevisions() {
+    
+    if (document.getElementById("ow_autopost_revisions").checked) {
+        confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions").checked = true : document.getElementById("ow_autopost_revisions").checked = false;
+    }
+}
+
 function func() {
     var ow_iframe_doc = getFrameDocument("ow_iframe"); 
     var ow_iframe_win = document.getElementById("ow_iframe").contentWindow;
@@ -222,13 +249,23 @@ function func() {
 					<td><input id="ow_password" type="text" name="ow_password" value="<?php echo get_option('ow_password'); ?>" /></td>
 					<td style="width:100%;">The password you use to login on OnlyWire.com.</td>
 				</tr>
+				<tr valign="top">
+					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost"><?php _e("Auto Post All Articles"); ?>:</label></th>
+					<td><input id="ow_autopost" type="checkbox" name="ow_autopost" <?php if(get_option('ow_autopost') == 'on') { echo 'checked="true"'; }?> /></td>
+					<td style="width:100%;"></td>
+				</tr>
+				<tr valign="top">
+					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_revisions"><?php _e("Auto Post All Article Revisions"); ?>:</label></th>
+					<td style="vertical-align: bottom;"><input id="ow_autopost_revisions" type="checkbox" name="ow_autopost_revisions" onclick="verifyAutoRevisions()" <?= get_option('ow_autopost_revisions')=='on'?'checked="checked"':'' ?> /></td>
+					<td style="width:100%;"><font style="color:red">&#42;</font>&nbsp;OnlyWire <strong>does <em>not</em></strong> recommend enabling this option.</td>
+				</tr>
 
 				
 			</table>
             <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
 			<input type="hidden" name="action" value="update" />
-			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_script" />
+			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_autopost,ow_autopost_revisions,ow_script" />
 	
 			<p class="submit">
 				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -240,17 +277,57 @@ function func() {
 }
 
 /**
+ * Function taken from Revision Control WordPress Plugin
+ * http://wordpress.org/extend/plugins/revision-control/
+ * Determines the post/page's ID based on the 'post' and 'post_ID' POST/GET fields.
+ */
+function ow_get_page_id() {
+	foreach ( array( 'post_ID', 'post' ) as $field )
+		if ( isset( $_REQUEST[ $field ] ) )
+			return absint($_REQUEST[ $field ]);
+
+	if ( isset($_REQUEST['revision']) )
+		if ( $post = get_post( $id = absint($_REQUEST['revision']) ) )
+			return absint($post->post_parent);
+
+	return false;
+}
+
+/**
  * Code for the meta box.
  * the post of this goes to the function ow_post()
  */
 function ow_posting()
 {
-	global $post_ID;
+    global $post_ID;
+    
+    $ow_post_type = get_post(ow_get_page_id())->post_status;
+
+    //Check to see if it's a revision ("draft" return type is a new post)
+    if ($ow_post_type != 'draft') {	
 ?>
     <label for="ow_post">
-        <input type="checkbox" checked="true" id="ow_post" name="ow_post" /> Post this to OnlyWire	
+        <input type="checkbox" <?= get_option('ow_autopost_revisions')=='on'?'checked="checked"':'' ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+    </label>
+    
+<?php	
+    } else {
+?>	    
+   <label for="ow_post">
+        <input type="checkbox" <?= get_option('ow_autopost')=='on'?'checked="checked"':'' ?> id="ow_post" name="ow_post" /> Post this to OnlyWire	
     </label>
 <?php
+    }
+}
+
+/**
+ * Return a random tag if none are supplied in the post
+ */
+function getDefaultTag() {
+    $tags = array("bookmark","favorite","blog","social","web","internet","share","organize","manage","reference","tag","save");
+    $rand_keys = array_rand($tags,2);
+    
+    return $tags[$rand_keys[0]];
 }
 
 /**
@@ -278,9 +355,9 @@ function ow_post( $postID )
             $data['token'] = implode('%26', $password);
 
             // get the services
-            $gservices = file_get_contents("http://onlywire.com/widget/getWidgetData.php?token=".$data['token']);
+            $gservices = GetRequest("http://onlywire.com/widget/getWidgetData.php?token=".$data['token']);
             // gservices is not "jsonp(..);" let's remove "jsonp(" and ");"
-            $gservices = str_replace('jsonp(','',$gservices);
+            $gservices = str_replace('jsonp(','',$gservices[1]);
             $gservices = str_replace(');','',$gservices);
             $jservices = json_decode($gservices);
 
@@ -295,13 +372,16 @@ function ow_post( $postID )
 
             $post = get_post($postID); 
             $tags = get_the_tags($postID);
-            $tagarr = array();
-            // build tags string
-            foreach($tags as $tag) {
-                array_push($tagarr, $tag->name);
+            if($tags) {
+                 $tagarr = array();
+                 // build tags string
+                 foreach($tags as $tag) {
+                     array_push($tagarr, $tag->name);
+                 }
+                 $tagstring = implode(' ', $tagarr);
+            } else {
+                   $tagstring = getDefaultTag();
             }
-            $tagstring = implode(' ', $tagarr);
-
             $data['url'] = $post->guid; 
             $data['title'] = $post->post_title;
             $data['tags'] = $tagstring;
