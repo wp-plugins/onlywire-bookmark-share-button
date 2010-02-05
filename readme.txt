@@ -4,7 +4,7 @@ Donate link: https://onlywire.com/signup
 Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter, addthis, sharethis, digg, reddit, stumbleupon, facebook, twitter, plaxo 
 Requires at least: 2.5
 Tested up to: 2.9
-Stable tag: 1.6
+Stable tag: 1.6.1
 
 OnlyWire syndicates your blog posts to over 30 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
 
@@ -62,6 +62,10 @@ Send us your feedback [http://onlywire.com/contact](http://onlywire.com/contact 
 4. Under your WordPress settings bar, you will see OnlyWire Options which allows you to change the look and feel of your Button that appears under articles.
 
 == Changelog ==
+= 1.6.1 =
+* Fixed parse error: syntax error, unexpected T_OBJECT_OPERATOR in owbutton_wordpress.php on line 304
+* Chaged the submitted URL to use permalink
+
 = 1.6 =
 * Fixed issue with "Settings" link appearing under all plugins
 * Added new "Auto Post All Article Revisions" option (turned off by default -- OnlyWire does not recommend enabling this option)

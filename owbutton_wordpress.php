@@ -3,7 +3,7 @@
 Plugin Name: OnlyWire for WordPress
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 1.6
+Version: 1.6.1
 Author: OnlyWire Engineering
 Author URI: http://onlywire.com/
 */
@@ -301,7 +301,8 @@ function ow_posting()
 {
     global $post_ID;
     
-    $ow_post_type = get_post(ow_get_page_id())->post_status;
+    $ow_post_type_id = get_post(ow_get_page_id());
+    $ow_post_type = $ow_post_type_id->post_status;
 
     //Check to see if it's a revision ("draft" return type is a new post)
     if ($ow_post_type != 'draft') {	
@@ -382,7 +383,7 @@ function ow_post( $postID )
             } else {
                    $tagstring = getDefaultTag();
             }
-            $data['url'] = $post->guid; 
+            $data['url'] = get_permalink($postID);
             $data['title'] = $post->post_title;
             $data['tags'] = $tagstring;
 
