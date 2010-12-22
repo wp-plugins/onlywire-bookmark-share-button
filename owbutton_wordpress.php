@@ -3,7 +3,7 @@
 Plugin Name: OnlyWire for WordPress
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 1.6.1
+Version: 1.6.2
 Author: OnlyWire Engineering
 Author URI: http://onlywire.com/
 */
@@ -256,7 +256,7 @@ function func() {
 				</tr>
 				<tr valign="top">
 					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_revisions"><?php _e("Auto Post All Article Revisions"); ?>:</label></th>
-					<td style="vertical-align: bottom;"><input id="ow_autopost_revisions" type="checkbox" name="ow_autopost_revisions" onclick="verifyAutoRevisions()" <?= get_option('ow_autopost_revisions')=='on'?'checked="checked"':'' ?> /></td>
+					<td style="vertical-align: bottom;"><input id="ow_autopost_revisions" type="checkbox" name="ow_autopost_revisions" onclick="verifyAutoRevisions()" <?php echo get_option('ow_autopost_revisions')=='on'?'checked="checked"':''; ?> /></td>
 					<td style="width:100%;"><font style="color:red">&#42;</font>&nbsp;OnlyWire <strong>does <em>not</em></strong> recommend enabling this option.</td>
 				</tr>
 
@@ -308,14 +308,14 @@ function ow_posting()
     if ($ow_post_type != 'draft') {	
 ?>
     <label for="ow_post">
-        <input type="checkbox" <?= get_option('ow_autopost_revisions')=='on'?'checked="checked"':'' ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+        <input type="checkbox" <?php echo get_option('ow_autopost_revisions')=='on'?'checked="checked"':''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
     </label>
     
 <?php	
     } else {
 ?>	    
    <label for="ow_post">
-        <input type="checkbox" <?= get_option('ow_autopost')=='on'?'checked="checked"':'' ?> id="ow_post" name="ow_post" /> Post this to OnlyWire	
+        <input type="checkbox" <?php echo get_option('ow_autopost')=='on'?'checked="checked"':''; ?> id="ow_post" name="ow_post" /> Post this to OnlyWire	
     </label>
 <?php
     }
@@ -377,12 +377,30 @@ function ow_post( $postID )
                  $tagarr = array();
                  // build tags string
                  foreach($tags as $tag) {
-                     array_push($tagarr, $tag->name);
+                     array_push($tagarr, str_replace(' ', '-', $tag->name));
                  }
                  $tagstring = implode(' ', $tagarr);
             } else {
                    $tagstring = getDefaultTag();
             }
+			
+			$categories = get_the_category($postID);
+			$categorystring = '';
+			if($categories) {
+				$categoryarr = array();
+				// build category string
+				foreach($categories as $category)
+				{
+					array_push($categoryarr, str_replace(' ', '-', $category->name));
+				}
+				
+				$categorystring = implode(' ', $categoryarr);
+			}
+			
+			if(trim($categorystring) != '') {
+				$tagstring = $tagstring.' '.$categorystring;
+			}	
+			
             $data['url'] = get_permalink($postID);
             $data['title'] = $post->post_title;
             $data['tags'] = $tagstring;
