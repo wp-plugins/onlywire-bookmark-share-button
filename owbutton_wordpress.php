@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: OnlyWire for WordPress[OFFICIAL]
+Plugin Name: OnlyWire for WordPress [OFFICIAL]
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
 Version: 1.6.2
