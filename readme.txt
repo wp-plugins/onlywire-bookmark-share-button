@@ -4,11 +4,13 @@ Donate link: https://onlywire.com/signup
 Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter, addthis, sharethis, digg, reddit, stumbleupon, facebook, twitter, plaxo 
 Requires at least: 2.5
 Tested up to: 2.9
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 
 OnlyWire syndicates your blog posts to over 30 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
 
 == Description ==
+
+** OFFICIAL PLUGIN **
 
 OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 30 social networking sites at once -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
 
@@ -62,6 +64,11 @@ Send us your feedback [http://onlywire.com/contact](http://onlywire.com/contact 
 4. Under your WordPress settings bar, you will see OnlyWire Options which allows you to change the look and feel of your Button that appears under articles.
 
 == Changelog ==
+= 1.6.2 =
+* Fixed design issue on setting page and dashboard option
+* Category send as tag name
+* Fixed bug when tags name or category name have space in names, replace space with hyphen(-).
+
 = 1.6.1 =
 * Fixed parse error: syntax error, unexpected T_OBJECT_OPERATOR in owbutton_wordpress.php on line 304
 * Chaged the submitted URL to use permalink
