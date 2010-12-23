@@ -42,7 +42,7 @@ Visit the Settings->OnlyWire tab in your WordPress admin tool.  You will see the
 
 = Is this free? =
 
-Yes, to use OnlyWire's service is absolutely free as long as you sign up for an account at OnlyWire.com and submit the URL of your website so we can validate the Button is installed correctly.  OnlyWire charges a small monthly fee for publishers and bloggers who do NOT wish to utilize the Button on their site.  OnlyWire employs talented engineers and designers to build and maintain the service therefore we have to make money either through site advertising or monthly subscription fees.
+Yes, you can use OnlyWire for FREE for up to 300 submissions per month (a submission is one post to one service, i.e. Twitter).  After 300 submissions, you must upgrade to a paid account.  Pricing starts at $10 per month for up to 1000 submissions.  OnlyWire's system also performs captcha solving for an additional fee.
 
 = What makes OnlyWire better than AddThis.com or ShareThis.com? =
 
