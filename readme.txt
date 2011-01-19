@@ -3,7 +3,7 @@ Contributors: craiglurey
 Donate link: https://onlywire.com/signup 
 Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter, addthis, sharethis, digg, reddit, stumbleupon, facebook, twitter, plaxo 
 Requires at least: 2.5
-Tested up to: 2.9
+Tested up to: 3.0.4
 Stable tag: 1.6.2
 
 OnlyWire syndicates your blog posts to over 30 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
@@ -64,6 +64,9 @@ Send us your feedback [http://onlywire.com/contact](http://onlywire.com/contact 
 4. Under your WordPress settings bar, you will see OnlyWire Options which allows you to change the look and feel of your Button that appears under articles.
 
 == Changelog ==
+= 1.6.3 =
+* Added option to turn on/off the OnlyWire Button beneath each post.
+
 = 1.6.2 =
 * Fixed design issue on setting page and dashboard option
 * Category send as tag name
