@@ -17,13 +17,19 @@ function ow_function($text) {
     global $post;
 
     $code = get_option('ow_script');
+	$enable_button = get_option('ow_autopost_enable');
 
-    if($code) {
-	$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/btn/button_'.$code.'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
-    } else {
-        $text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
-    }
-
+	if($enable_button)
+	{
+	    if($code) 
+		{
+			$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/btn/button_'.$code.'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+	    } 
+		else 
+		{
+        	$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+	    }
+	}
     return $text;
 }
 
@@ -39,9 +45,11 @@ function ow_activate()
 	global $wpdb;
 	add_option('ow_username');
 	add_option('ow_password');
-        add_option('ow_autopost');
-        add_option('ow_autopost_revisions');
-        add_option('ow_script');
+    add_option('ow_autopost');
+    add_option('ow_autopost_revisions');
+    add_option('ow_script');
+	add_option('ow_autopost_enable');
+	update_option('ow_autopost_enable', 'on');
 }
 
 /**
@@ -259,8 +267,11 @@ function func() {
 					<td style="vertical-align: bottom;"><input id="ow_autopost_revisions" type="checkbox" name="ow_autopost_revisions" onclick="verifyAutoRevisions()" <?php echo get_option('ow_autopost_revisions')=='on'?'checked="checked"':''; ?> /></td>
 					<td style="width:100%;"><font style="color:red">&#42;</font>&nbsp;OnlyWire <strong>does <em>not</em></strong> recommend enabling this option.</td>
 				</tr>
-
-				
+				<tr valign="top">
+					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_enable"><?php _e("Enable this feature"); ?>:</label></th>
+					<td><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php if(get_option('ow_autopost_enable') == 'on') { echo 'checked="true"'; }?> /></td>
+					<td style="width:100%;"></td>
+				</tr>
 			</table>
             <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
