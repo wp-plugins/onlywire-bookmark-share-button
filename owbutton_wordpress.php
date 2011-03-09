@@ -269,7 +269,7 @@ function func() {
 				</tr>
 				<tr valign="top">
 					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_enable"><?php _e("Show Bookmark & Share Button"); ?>:</label></th>
-					<td><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php if(get_option('ow_autopost_enable') == 'on') { echo 'checked="true"'; }?> /></td>
+					<td style="vertical-align: bottom;"><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php if(get_option('ow_autopost_enable') == 'on') { echo 'checked="true"'; }?> /></td>
 					<td style="width:100%;"></td>
 				</tr>
 			</table>
