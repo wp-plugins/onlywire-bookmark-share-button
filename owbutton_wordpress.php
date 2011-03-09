@@ -3,7 +3,7 @@
 Plugin Name: OnlyWire for WordPress [OFFICIAL]
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 1.6.3
+Version: 1.6.4
 Author: OnlyWire Engineering
 Author URI: http://onlywire.com/
 */
@@ -19,7 +19,7 @@ function ow_function($text) {
     $code = get_option('ow_script');
 	$enable_button = get_option('ow_autopost_enable');
 
-	if($enable_button)
+	if($enable_button == 'on')
 	{
 	    if($code) 
 		{
@@ -268,7 +268,7 @@ function func() {
 					<td style="width:100%;"><font style="color:red">&#42;</font>&nbsp;OnlyWire <strong>does <em>not</em></strong> recommend enabling this option.</td>
 				</tr>
 				<tr valign="top">
-					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_enable"><?php _e("Enable this feature"); ?>:</label></th>
+					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_enable"><?php _e("Show Bookmark & Share Button"); ?>:</label></th>
 					<td><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php if(get_option('ow_autopost_enable') == 'on') { echo 'checked="true"'; }?> /></td>
 					<td style="width:100%;"></td>
 				</tr>
@@ -276,7 +276,7 @@ function func() {
             <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
 			<input type="hidden" name="action" value="update" />
-			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_autopost,ow_autopost_revisions,ow_script" />
+			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_autopost,ow_autopost_revisions,ow_script,ow_autopost_enable" />
 	
 			<p class="submit">
 				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
