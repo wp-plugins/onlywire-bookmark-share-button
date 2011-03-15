@@ -315,8 +315,8 @@ function ow_posting()
     $ow_post_type_id = get_post(ow_get_page_id());
     $ow_post_type = $ow_post_type_id->post_status;
 
-    //Check to see if it's a revision ("draft" return type is a new post)
-    if ($ow_post_type != 'draft') {	
+    //Check to see if it's a revision ("auto-draft" or "draft" return type is a new post)
+    if ( ($ow_post_type != 'auto-draft') && ($ow_post_type != 'draft') ){	
 ?>
     <label for="ow_post">
         <input type="checkbox" <?php echo get_option('ow_autopost_revisions')=='on'?'checked="checked"':''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
