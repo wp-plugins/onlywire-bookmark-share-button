@@ -3,7 +3,7 @@
 Plugin Name: OnlyWire for WordPress [OFFICIAL]
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 1.6.4
+Version: 1.6.5
 Author: OnlyWire Engineering
 Author URI: http://onlywire.com/
 */
@@ -57,6 +57,7 @@ function ow_activate()
  */
 add_action('admin_menu', "ow_adminInit");
 add_action('publish_post', 'ow_post');
+add_action('future_post','ow_post');
 add_filter( 'plugin_action_links', 'ow_settings_link', 10, 2 );
 
 /**
@@ -222,7 +223,38 @@ function verifyAutoRevisions() {
         confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions").checked = true : document.getElementById("ow_autopost_revisions").checked = false;
     }
 }
+function auth() {
+	 var ow_username = document.getElementById("ow_username").value;
+	 var ow_password = document.getElementById("ow_password").value;
+	 var url = "<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user="+ow_username+"&auth_pw="+ow_password;
+	 var xmlhttp;
+	
+	if (window.XMLHttpRequest)
+  	{// code for IE7+, Firefox, Chrome, Opera, Safari
+ 		xmlhttp=new XMLHttpRequest();
+  	}
+	else
+  	{	// code for IE6, IE5
+  		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  	}
+  
+	xmlhttp.onreadystatechange=function()
+  	{   		
+  		if (xmlhttp.readyState==4 && xmlhttp.status == 200)
+    	{ 
+			if(xmlhttp.responseText == 1){
+				 func();
+				 return false; 
+			} else {
+				alert("Invalid Username or Password. \nPlease provide correct login Information.");
+				 return false;
+			}
+    	}
+  	}
 
+	xmlhttp.open("GET",url,true);
+	xmlhttp.send();
+}
 function func() {
     var ow_iframe_doc = getFrameDocument("ow_iframe"); 
     var ow_iframe_win = document.getElementById("ow_iframe").contentWindow;
@@ -240,7 +272,7 @@ function func() {
 	<div class="wrap">
 	<h2>OnlyWire Settings</h2>
 	
-		<form id="ow_form" method="post" action="options.php" onsubmit="func(); return false;">
+		<form id="ow_form" method="post" action="options.php" onSubmit="auth(); return false;">
 			<?php wp_nonce_field('update-options'); ?>
 	
             <input id="ow_script" type="hidden" name="ow_script" value="<?php echo get_option('ow_script'); ?>" />
@@ -254,7 +286,7 @@ function func() {
 				
 				<tr valign="top">
 					<th style="white-space:nowrap;" scope="row"><label for="ow_password"><?php _e("OnlyWire password"); ?>:</label></th>
-					<td><input id="ow_password" type="text" name="ow_password" value="<?php echo get_option('ow_password'); ?>" /></td>
+					<td><input id="ow_password" type="password" name="ow_password" value="<?php echo get_option('ow_password'); ?>" /></td>
 					<td style="width:100%;">The password you use to login on OnlyWire.com.</td>
 				</tr>
 				<tr valign="top">
@@ -411,10 +443,12 @@ function ow_post( $postID )
 			if(trim($categorystring) != '') {
 				$tagstring = $tagstring.' '.$categorystring;
 			}	
-			
+						
             $data['url'] = get_permalink($postID);
             $data['title'] = $post->post_title;
             $data['tags'] = $tagstring;
+            $d = 'm\/d\/Y H\.i T';
+            $data['scheduledtime'] = get_post_time($d,true,$postID,false);
 
             $a = PostRequest("http://onlywire.com/b/saveurl2.php","", $data);
 
