@@ -226,7 +226,7 @@ function verifyAutoRevisions() {
 function auth() {
 	 var ow_username = document.getElementById("ow_username").value;
 	 var ow_password = document.getElementById("ow_password").value;
-	 var url = "<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user="+ow_username+"&auth_pw="+ow_password;
+	 var url = "<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user="+ow_username.trim()+"&auth_pw="+ow_password.trim();
 	 var xmlhttp;
 	
 	if (window.XMLHttpRequest)
