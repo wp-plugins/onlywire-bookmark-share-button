@@ -3,7 +3,7 @@
 Plugin Name: OnlyWire for WordPress [OFFICIAL]
 Plugin URI: http://onlywire.com/
 Description: Easily post to millions of sites with one button. 
-Version: 1.6.5
+Version: 1.6.6
 Author: OnlyWire Engineering
 Author URI: http://onlywire.com/
 */
@@ -226,7 +226,7 @@ function verifyAutoRevisions() {
 function auth() {
 	 var ow_username = document.getElementById("ow_username").value;
 	 var ow_password = document.getElementById("ow_password").value;
-	 var url = "<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user="+encodeURIComponent(ow_username.trim())+"&auth_pw="+encodeURIComponent(ow_password.trim());
+	 var url = "<?php echo site_url()?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user="+ow_username+"&auth_pw="+ow_password;
 	 var xmlhttp;
 	
 	if (window.XMLHttpRequest)
@@ -265,7 +265,7 @@ function func() {
     
     // call the local buttonid.php (ajax) file to make a request with the data from the form to onlywire, and get back the buttonid
     var s = serialize(buttonform);
-    var myRequest = new ajaxObject("<?php echo get_bloginfo('siteurl')?>/wp-content/plugins/onlywire-bookmark-share-button/buttonid.php", processData);
+    var myRequest = new ajaxObject("<?php echo site_url()?>/wp-content/plugins/onlywire-bookmark-share-button/buttonid.php", processData);
     myRequest.update(s);  // Server is contacted here.
 }
     </script>
@@ -305,7 +305,7 @@ function func() {
 					<td style="width:100%;"></td>
 				</tr>
 			</table>
-            <iframe id="ow_iframe" src="<?php echo get_bloginfo('siteurl')."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
+            <iframe id="ow_iframe" src="<?php echo site_url()."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
 	
 			<input type="hidden" name="action" value="update" />
 			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_autopost,ow_autopost_revisions,ow_script,ow_autopost_enable" />
@@ -403,12 +403,12 @@ function ow_post( $postID )
             // gservices is not "jsonp(..);" let's remove "jsonp(" and ");"
             $gservices = str_replace('jsonp(','',$gservices[1]);
             $gservices = str_replace(');','',$gservices);
-            $jservices = json_decode($gservices);
+            $jservices = json_decode($gservices,true);
 
             // $jservices->services is an array of objects
             $service_ids = array();
-            foreach($jservices->services as $jobj) {
-                array_push($service_ids, $jobj->pk_id);
+            foreach($jservices['services'] as $jobj) {
+                array_push($service_ids, $jobj['pk_id']);
             }
             $services =  implode(',',$service_ids);
 
@@ -444,8 +444,8 @@ function ow_post( $postID )
 				$tagstring = $tagstring.' '.$categorystring;
 			}	
 						
-            $data['url'] = get_permalink($postID);
-            $data['title'] = $post->post_title;
+            $data['url'] = urlencode(get_permalink($postID));
+            $data['title'] = urlencode($post->post_title);
             $data['tags'] = $tagstring;
             $d = 'm\/d\/Y H\.i T';
             $data['scheduledtime'] = get_post_time($d,true,$postID,false);
