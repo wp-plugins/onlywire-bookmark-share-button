@@ -12,11 +12,11 @@ OnlyWire syndicates your blog posts to over 30 social networking sites *simultan
 
 ** OFFICIAL PLUGIN **
 
-OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 30 social networking sites at once -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
+OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 45 social networking sites at once  -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
 
 When you download and activate the OnlyWire WordPress Plugin, a "Bookmark & Share" button will instantly appear underneath each of your blog posts.  When you mouse-over the button, it will expand to provide you and your readers an easy way to share your post with dozens of social networks.
 
-**Here's the magic part** - When you create a free OnlyWire account and set up your social networking site logins, OnlyWire will submit your post to all of the sites simultaneously.  OnlyWire does all of the submission behind the scenes on behalf of you.  When your readers use OnlyWire, they can also auto-submit to all of **their** networking sites.  Sign up for a free account at [https://onlywire.com/signup](https://onlywire.com/signup "Signup Page").
+**Here's the magic part** - When you create a OnlyWire account and set up your social networking site logins, OnlyWire will submit your post to all of the sites simultaneously.  OnlyWire does all of the submission behind the scenes on behalf of you.  When your readers use OnlyWire, they can also auto-submit to all of **their** networking sites.  Sign up for a free account at [https://onlywire.com/signup](https://onlywire.com/signup "Signup Page").
 
 OnlyWire's service has a proven and exponentially positive impact on your backlinks, site traffic and search engine index speed.  [Thousands of articles have been written about OnlyWire's service](http://blogsearch.google.com/blogsearch?hl=en&ie=UTF-8&q=onlywire&um=1&sa=N&start=0 "Click to open a google search on OnlyWire").
 
@@ -64,6 +64,11 @@ Send us your feedback [http://onlywire.com/contact](http://onlywire.com/contact 
 4. Under your WordPress settings bar, you will see OnlyWire Options which allows you to change the look and feel of your Button that appears under articles.
 
 == Changelog ==
+= 1.6.6 =
+* Fixed error: Invalid argument supplied for foreach() in owbutton_wordpress.php.
+* Changed the get_bloginfo('site_url') to site_url().
+* Fixed issue with special characters .
+
 = 1.6.5 =
 * Modify wordpress plugin to verify your onlywire password when you save settings.
 * Added "Scheduled submissions" feature.
