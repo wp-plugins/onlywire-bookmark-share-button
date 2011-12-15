@@ -4,7 +4,7 @@ Donate link: https://onlywire.com/signup
 Tags: onlywire, bookmarks, bookmarking, social networking, multiple, submitter, addthis, sharethis, digg, reddit, stumbleupon, facebook, twitter, plaxo 
 Requires at least: 2.5
 Tested up to: 3.2.1
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 
 OnlyWire syndicates your blog posts to over 30 social networking sites *simultaneously* with one button click.  Increase your blog traffic overnight.
 
