@@ -97,7 +97,8 @@ function EncodePostRequest($url, $referer, $_data) {
     $data = array();    
     while(list($n,$v) = each($_data)){
 		 $data[] = "$n=".urlencode($v);
-    }    
+    } 
+	   
     $data = implode('&', $data);
     // format --> test1=a&test2=b etc.
  
