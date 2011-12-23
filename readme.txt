@@ -12,7 +12,7 @@ OnlyWire syndicates your blog posts to over 30 social networking sites *simultan
 
 ** OFFICIAL PLUGIN **
 
-OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 50 social networking sites at once  -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
+OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 50+ social networking sites at once  -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
 
 When you download and activate the OnlyWire WordPress Plugin, a "Bookmark & Share" button will instantly appear underneath each of your blog posts.  When you mouse-over the button, it will expand to provide you and your readers an easy way to share your post with dozens of social networks.
 
