@@ -23,7 +23,9 @@ function ow_function($text) {
 	{
 	    if($code) 
 		{
-			$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/btn/button_'.$code.'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+			$temp = explode("script>", $code);	
+			$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/btn/button_'.$temp[4].'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+		
 	    } 
 		else 
 		{
