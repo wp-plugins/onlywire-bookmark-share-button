@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: OnlyWire for WordPress [OFFICIAL]
-Plugin URI: http://onlywire.com/
+Plugin URI: http://www.onlywire.com/
 Description: Easily post to millions of sites with one button. 
 Version: 1.6.6
 Author: OnlyWire Engineering
-Author URI: http://onlywire.com/
+Author URI: http://www.onlywire.com/
 */
 
 $wpURL = get_bloginfo('wpurl');
@@ -24,12 +24,12 @@ function ow_function($text) {
 	    if($code) 
 		{
 			$temp = explode("script>", $code);	
-			$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/btn/button_'.$temp[4].'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+			$text .= '<script type="text/javascript" class="owbutton" src="http://www.onlywire.com/btn/button_'.$temp[4].'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
 		
 	    } 
 		else 
 		{
-        	$text .= '<script type="text/javascript" class="owbutton" src="http://onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+        	$text .= '<script type="text/javascript" class="owbutton" src="http://www.onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
 	    }
 	}
     return $text;
@@ -276,8 +276,11 @@ function func() {
 	
 		<form id="ow_form" method="post" action="options.php" onSubmit="auth(); return false;">
 			<?php wp_nonce_field('update-options'); ?>
-	
-            <input id="ow_script" type="hidden" name="ow_script" value="<?php echo get_option('ow_script'); ?>" />
+			<?
+            $code_form = get_option('ow_script');
+			$temp = explode("script>", $code_form);	
+			?>
+            <input id="ow_script" type="hidden" name="ow_script" value="<?=$temp[4]?>" />
 
 			<table class="form-table">
 				<tr valign="top">
@@ -401,7 +404,7 @@ function ow_post( $postID )
             $data['token'] = implode('%26', $password);
 
             // get the services
-            $gservices = GetRequest("http://onlywire.com/widget/getWidgetData.php?token=".$data['token']);
+            $gservices = GetRequest("http://www.onlywire.com/widget/getWidgetData.php?token=".$data['token']);
             // gservices is not "jsonp(..);" let's remove "jsonp(" and ");"
             $gservices = str_replace('jsonp(','',$gservices[1]);
             $gservices = str_replace(');','',$gservices);
@@ -452,7 +455,7 @@ function ow_post( $postID )
             $d = 'm\/d\/Y H\.i T';
             $data['scheduledtime'] = get_post_time($d,true,$postID,false);
 
-            $a = PostRequest("http://onlywire.com/b/saveurl2.php","", $data);
+            $a = PostRequest("http://www.onlywire.com/b/saveurl2.php","", $data);
 
         }
     }
