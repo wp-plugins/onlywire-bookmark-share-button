@@ -12,15 +12,7 @@ OnlyWire syndicates your blog posts to over 50 social networking sites *simultan
 
 ** OFFICIAL PLUGIN **
 
-OnlyWire syndicates your content and articles to the web's top social networking sites with a single button click. Used by thousands of bloggers and publishers, OnlyWire simplifies the process of submitting your content to over 50+ social networking sites at once  -- including Digg, Reddit, StumbleUpon, Twitter and many others. 
-
-When you download and activate the OnlyWire WordPress Plugin, a "Bookmark & Share" button will instantly appear underneath each of your blog posts.  When you mouse-over the button, it will expand to provide you and your readers an easy way to share your post with dozens of social networks.
-
-**Here's the magic part** - When you create a OnlyWire account and set up your social networking site logins, OnlyWire will submit your post to all of the sites simultaneously.  OnlyWire does all of the submission behind the scenes on behalf of you.  When your readers use OnlyWire, they can also auto-submit to all of **their** networking sites.  Sign up for a free account at [https://onlywire.com/signup](https://onlywire.com/signup "Signup Page").
-
-OnlyWire's service has a proven and exponentially positive impact on your backlinks, site traffic and search engine index speed.  [Thousands of articles have been written about OnlyWire's service](http://blogsearch.google.com/blogsearch?hl=en&ie=UTF-8&q=onlywire&um=1&sa=N&start=0 "Click to open a google search on OnlyWire").
-
-**OnlyWire is a serious company with serious people working hard to add value to your blog.  Your privacy and security are taken very seriously.  All passwords are saved via SSL encryption and your information is not shared with any 3rd parties.**
+Social Media Professionals use OnlyWire to launch social media campaigns, grow their followers and post content to the top Social Media Networks.Once you download and activate the OnlyWire WordPress Plugin, every time you update your blog site on your WordPress page, OnlyWire will pick up your post and automatically submit it to all the Social Media Networks you have set up with OnlyWire.Our Bookmark & Share Tool is a downloadable app on your computer. ÊUse it to add a Share Button to your website or blog. ÊChoose which Social Media Networks to include. ÊSelect the size of icons, background color, font, and mouse-over feature. ÊOnce you've saved your button, a Bookmark & Share signature will appear under each of your blog posts. When a visitor to your website or blog mouses over the button, it expands and they can select a method to share your post with others.Visit our website to learn about OnlyWire's other Tools http://onlywire.com/tools.Sign up for a free account at https://onlywire.com/signupYour privacy and security are guarded seriously at OnlyWire. ÊAll passwords are saved via SSL encryption and your information is not shared with any Third Parties.
 
 == Installation ==
 ** Please deactivate and delete any old copies of the OnlyWire WordPress plugin before you install the latest version.
