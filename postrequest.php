@@ -1,145 +1,84 @@
 <?php
-function GetRequest($url) {
-    // parse the given URL
-    $url = parse_url($url);
-    if ($url['scheme'] != 'http') { 
-        die('Only HTTP request are supported !');
+function createBookmark($data, $username, $password){
+    
+    $networks = "";
+    $output = "";
+    
+    if(isset($data['networks']) && $data['networks']!="")
+    {
+         $networks = "&networks={$data['networks']}";
     }
+    
+    $query = SITE_URL."api/v2/add/bookmark?url={$data['url']}&title={$data['title']}&tags={$data['tags']}&description={$data['description']}&scheduled={$data['scheduled']}{$networks}";
 
-    // extract host and path:
-    $host = $url['host'];
-    $path = $url['path'];
+    $ch = curl_init();
 
-    // open a socket connection on port 80
-    $fp = fsockopen($host, 80);
- 
-    // send the request headers:
-    fputs($fp, "GET $path HTTP/1.0\r\n");
-    fputs($fp, "Host: $host\r\n");
-    fputs($fp, "User-Agent: HTMLGET 1.0\r\n\r\n");
-    //fputs($fp, $data);
- 
-    $result = ''; 
-    while(!feof($fp)) {
-        // receive the results of the request
-        $result .= fgets($fp, 128);
-    }
- 
-    // close the socket connection:
-    fclose($fp);
- 
-    // split the result header from the content
-    $result = explode("\r\n\r\n", $result, 2);
- 
-    $header = isset($result[0]) ? $result[0] : '';
-    $content = isset($result[1]) ? $result[1] : '';
- 
-    // return as array:
-    return array($header, $content);
- 
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:  application/json"));
+    curl_setopt($ch, CURLOPT_URL, $query);
+    curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+    $output = curl_exec($ch);
 
+    curl_close($ch);
+    
+    return $output;
 }
 
-function PostRequest($url, $referer, $_data) {
- 
-    // convert variables array to string:
-    $data = array();    
-    while(list($n,$v) = each($_data)){
-		 $data[] = "$n=$v";
-    }    
-    $data = implode('&', $data);
-    // format --> test1=a&test2=b etc.
- 
-    // parse the given URL
-    $url = parse_url($url);
-    if ($url['scheme'] != 'http') { 
-        die('Only HTTP request are supported !');
-    }
- 
-    // extract host and path:
-    $host = $url['host'];
-    $path = $url['path'];
- 
-    // open a socket connection on port 80
-    $fp = fsockopen($host, 80);
- 
-    // send the request headers:
-    fputs($fp, "POST $path HTTP/1.1\r\n");
-    fputs($fp, "Host: $host\r\n");
-    fputs($fp, "Referer: $referer\r\n");
-    fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-    fputs($fp, "Content-length: ". strlen($data) ."\r\n");
-    fputs($fp, "Connection: close\r\n\r\n");
-    fputs($fp, $data);
- 
-    $result = ''; 
-    while(!feof($fp)) {
-        // receive the results of the request
-        $result .= fgets($fp, 128);
-    }
- 
-    // close the socket connection:
-    fclose($fp);
- 
-    // split the result header from the content
-    $result = explode("\r\n\r\n", $result, 2);
- 
-    $header = isset($result[0]) ? $result[0] : '';
-    $content = isset($result[1]) ? $result[1] : '';
- 
-    // return as array:
-    return array($header, $content);
+function getServiceLogins($username, $password){
+    
+    $query = SITE_URL."api/v2/user/networks";
+    $ch    = curl_init();
+
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:  application/json"));
+    curl_setopt($ch, CURLOPT_URL, $query);
+    curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+
+    $output = curl_exec($ch);
+    curl_close($ch);
+    
+    return json_decode($output);
 }
 
-function EncodePostRequest($url, $referer, $_data) {
- 
-    // convert variables array to string:
-    $data = array();    
-    while(list($n,$v) = each($_data)){
-		 $data[] = "$n=".urlencode($v);
-    } 
-	   
-    $data = implode('&', $data);
-    // format --> test1=a&test2=b etc.
- 
-    // parse the given URL
-    $url = parse_url($url);
-    if ($url['scheme'] != 'http') { 
-        die('Only HTTP request are supported !');
-    }
- 
-    // extract host and path:
-    $host = $url['host'];
-    $path = $url['path'];
- 
-    // open a socket connection on port 80
-    $fp = fsockopen($host, 80);
- 
-    // send the request headers:
-    fputs($fp, "POST $path HTTP/1.1\r\n");
-    fputs($fp, "Host: $host\r\n");
-    fputs($fp, "Referer: $referer\r\n");
-    fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-    fputs($fp, "Content-length: ". strlen($data) ."\r\n");
-    fputs($fp, "Connection: close\r\n\r\n");
-    fputs($fp, $data);
- 
-    $result = ''; 
-    while(!feof($fp)) {
-        // receive the results of the request
-        $result .= fgets($fp, 128);
-    }
- 
-    // close the socket connection:
-    fclose($fp);
- 
-    // split the result header from the content
-    $result = explode("\r\n\r\n", $result, 2);
- 
-    $header = isset($result[0]) ? $result[0] : '';
-    $content = isset($result[1]) ? $result[1] : '';
- 
-    // return as array:
-    return array($header, $content);
+function getUser($username, $password, $url = ""){
+    
+    $query = SITE_URL."api/v2/user/info";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:  application/json"));
+    curl_setopt($ch, CURLOPT_URL, $query);
+    curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    
+    return json_decode($output);
 }
+function checkUser($username, $password){
+    
+    $query = SITE_URL."api/v2/user/info";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:  application/json"));
+    curl_setopt($ch, CURLOPT_URL, $query);
+    curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    
+    return $output;
+}
+   
 ?>

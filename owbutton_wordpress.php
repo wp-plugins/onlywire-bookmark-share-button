@@ -1,37 +1,29 @@
 <?php
 /*
-Plugin Name: OnlyWire for WordPress [OFFICIAL]
-Plugin URI: http://www.onlywire.com/
-Description: Easily post to millions of sites with one button. 
-Version: 1.6.6
-Author: OnlyWire Engineering
-Author URI: http://www.onlywire.com/
-*/
+  Plugin Name: OnlyWire for WordPress [OFFICIAL]
+  Plugin URI: http://www.onlywire.com/
+  Description: Easily post to millions of sites with one button.
+  Version: 1.6.9
+  Author: OnlyWire Engineering
+  Author URI: http://www.onlywire.com/
+ */
 
 $wpURL = get_bloginfo('wpurl');
 
+include ("config.php");
 include ("postrequest.php");
-include "jsonwrapper/jsonwrapper.php";
 
-function ow_function($text) {
+function ow_function($text)
+{
     global $post;
 
-    $code = get_option('ow_script');
-	$enable_button = get_option('ow_autopost_enable');
+    $code          = get_option('ow_script');
+    $enable_button = get_option('ow_autopost_enable');
 
-	if($enable_button == 'on')
-	{
-	    if($code) 
-		{
-			$temp = explode("script>", $code);	
-			$text .= '<script type="text/javascript" class="owbutton" src="http://www.onlywire.com/btn/button_'.$temp[4].'" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
-		
-	    } 
-		else 
-		{
-        	$text .= '<script type="text/javascript" class="owbutton" src="http://www.onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
-	    }
-	}
+    if ($enable_button == 'on')
+    {
+        $text .= '<script type="text/javascript" class="owbutton" src="https://www.onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+    }
     return $text;
 }
 
@@ -44,14 +36,15 @@ register_activation_hook(__FILE__, 'ow_activate');
 
 function ow_activate()
 {
-	global $wpdb;
-	add_option('ow_username');
-	add_option('ow_password');
+    global $wpdb;
+    add_option('ow_username');
+    add_option('ow_password');
+    add_option('ow_service_logins');
     add_option('ow_autopost');
     add_option('ow_autopost_revisions');
     add_option('ow_script');
-	add_option('ow_autopost_enable');
-	update_option('ow_autopost_enable', 'on');
+    add_option('ow_autopost_enable');
+    update_option('ow_autopost_enable', 'on');
 }
 
 /**
@@ -59,269 +52,436 @@ function ow_activate()
  */
 add_action('admin_menu', "ow_adminInit");
 add_action('publish_post', 'ow_post');
-add_action('future_post','ow_post');
-add_filter( 'plugin_action_links', 'ow_settings_link', 10, 2 );
+add_action('future_post', 'ow_post');
+add_filter('plugin_action_links', 'ow_settings_link', 10, 2);
 
 /**
  * Adds an action link to the Plugins page
  */
-function ow_settings_link($links, $file){
-	static $this_plugin;
- 
-	if( !$this_plugin ) $this_plugin = plugin_basename(__FILE__);
- 
-	if( $file == $this_plugin ){
-		$settings_link = '<a href="options-general.php?page=onlywireoptions">' . __('Settings') . '</a>';
-		$links = array_merge( array($settings_link), $links); // before other links
-	}
-	return $links;
+function ow_settings_link($links, $file)
+{
+    static $this_plugin;
+
+    if (!$this_plugin)
+        $this_plugin = plugin_basename(__FILE__);
+
+    if ($file == $this_plugin)
+    {
+        $settings_link = '<a href="options-general.php?page=onlywireoptions">'.__('Settings').'</a>';
+        $links         = array_merge(array($settings_link), $links); // before other links
+    }
+    return $links;
 }
 
 function ow_adminInit()
 {
-	if( function_exists("add_meta_box") )
-		add_meta_box("onlywire-post", "OnlyWire Bookmark &amp; Share", "ow_posting", "post", "normal", "high");
-	
-	add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
+    if (function_exists("add_meta_box"))
+        add_meta_box("onlywire-post", "OnlyWire Bookmark &amp; Share", "ow_posting", "post", "normal", "high");
+
+    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
 }
 
 function ow_optionsAdmin()
 {
-?>
+    ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL ?>css/wordpress.css"/>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>
-function getFrameDocument(theId) { 
-    
-    if(document.getElementById(theId)) {
-        var iframe_document = null;
-        theId = document.getElementById(theId);
-        if (theId.contentDocument) {
-            iframe_document = theId.contentDocument;
-        }
-        else if (theId.contentWindow) {
-            iframe_document = theId.contentWindow.document;
-        }
-        else if (theId.document) {
-            iframe_document = theId.document;
-        }
-        else {
-            throw(new Error("Cannot access iframe document."));
-        }
-        
-        return iframe_document;
-    }
+        function verifyAutoRevisions() {
 
-}
-function ajaxObject(url, callbackFunction) {
-  var that=this;      
-  this.updating = false;
-  this.abort = function() {
-    if (that.updating) {
-      that.updating=false;
-      that.AJAX.abort();
-      that.AJAX=null;
-    }
-  }
-  this.update = function(passData,postMethod) { 
-    if (that.updating) { return false; }
-    that.AJAX = null;                          
-    if (window.XMLHttpRequest) {              
-      that.AJAX=new XMLHttpRequest();              
-    } else {                                  
-      that.AJAX=new ActiveXObject("Microsoft.XMLHTTP");
-    }                                             
-    if (that.AJAX==null) {                             
-      return false;                               
-    } else {
-      that.AJAX.onreadystatechange = function() {  
-        if (that.AJAX.readyState==4) {             
-          that.updating=false;                
-          that.callback(that.AJAX.responseText,that.AJAX.status,that.AJAX.responseXML);        
-          that.AJAX=null;                                         
-        }                                                      
-      }                                                        
-      that.updating = new Date();                              
-      if (/post/i.test(postMethod)) {
-        var uri=urlCall+'?'+that.updating.getTime();
-        that.AJAX.open("POST", uri, true);
-        that.AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        that.AJAX.setRequestHeader("Content-Length", passData.length);
-        that.AJAX.send(passData);
-      } else {
-        var uri=urlCall+'?'+passData+'&timestamp='+(that.updating.getTime()); 
-        that.AJAX.open("GET", uri, true);                             
-        that.AJAX.send(null);                                         
-      }              
-      return true;                                             
-    }                                                                           
-  }
-  var urlCall = url;        
-  this.callback = callbackFunction || function () { };
-}
-function obj2query(obj, forPHP, parentObject){
-   if( typeof obj != 'object' ) return '';
+            if (document.getElementById("ow_autopost_revisions").checked) {
+                confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions").checked = true : document.getElementById("ow_autopost_revisions").checked = false;
+            }
+        }
+        function auth() {
+            var ow_username = document.getElementById("ow_username").value;
+            var ow_password = document.getElementById("ow_password").value;
+            var url = "<?php echo site_url() ?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user=" + encodeURIComponent(ow_username.trim()) + "&auth_pw=" + encodeURIComponent(ow_password.trim());
+            var xmlhttp;
 
-   if (arguments.length == 1)
-      forPHP = /\.php$/.test(document.location.href);
-   
-   var rv = '';
-   for(var prop in obj) if (obj.hasOwnProperty(prop) ) {
-
-      var qname = parentObject
-         ? parentObject + '.' + prop
-         : prop;
-
-      // Expand Arrays
-      if (obj[prop] instanceof Array)
-         for( var i = 0; i < obj[prop].length; i++ )
-            if( typeof obj[prop][i] == 'object' )
-               rv += '&' + obj2query( obj[prop][i], forPHP, qname );
+            if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
             else
-               rv += '&' + encodeURIComponent(qname) + (forPHP ? '[]' : '')
-                    + '=' + encodeURIComponent( obj[prop][i] );
+            {	// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
 
-      // Expand Dates
-      else if (obj[prop] instanceof Date)
-         rv += '&' + encodeURIComponent(qname) + '=' + obj[prop].getTime();
+            xmlhttp.onreadystatechange = function()
+            {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                {
+                    console.log(xmlhttp.responseText);
+                    var data = JSON.parse(xmlhttp.responseText);
+                    if (data.success === true) {
 
-      // Expand Objects
-      else if (obj[prop] instanceof Object)
-         // If they're String() or Number() etc
-         if (obj.toString && obj.toString !== Object.prototype.toString)
-            rv += '&' + encodeURIComponent(qname) + '=' + encodeURIComponent( obj[prop].toString() );
-         // Otherwise, we want the raw properties
-         else
-            rv += '&' + obj2query(obj[prop], forPHP, qname);
+                        var comma_seperated_logins = [];
+                        $("input[name='service_logins[]']:checked").each(function() {
+                            comma_seperated_logins.push(this.value);
+                        });
+                        $("#ow_service_logins").val(comma_seperated_logins);
 
-      // Output non-object
-      else
-         rv += '&' + encodeURIComponent(qname) + '=' + encodeURIComponent( obj[prop] );
+                        document.getElementById("ow_form").submit();
+                        return true;
+                    } else {
+                        alert(data.error_message);
+                        return false;
+                    }
+                }
+            }
 
-   }
-   return rv.replace(/^&/,'');
-}
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
 
+        /* This is fir select all checkboxes.*/
+        function selectAll() {
+            $("input[name='service_logins[]']").prop("checked", "checked");
+        }
 
-function serialize(form)
-{
-    var obj = {};
-    for(var i=0; i<form.elements.length; i++) {
-        obj[form.elements[i].name] = form.elements[i].value;
-    }
-    return obj2query(obj);
-}
-function processData(responseText) {
-    // update the hidden ow_script input box with responseText, and submit form
-    //console.log(responseText);
-    document.getElementById("ow_script").value = responseText; 
-    document.getElementById("ow_form").submit();
-}
+        function selectNone() {
+            $("input[name='service_logins[]']").prop("checked", false);
+        }
 
-/**
- * Verify the user wants to turn on the "Auto Post All Article Revisions" option -- it is recommended to leave this turned off
- */
-function verifyAutoRevisions() {
-    
-    if (document.getElementById("ow_autopost_revisions").checked) {
-        confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions").checked = true : document.getElementById("ow_autopost_revisions").checked = false;
-    }
-}
-function auth() {
-	 var ow_username = document.getElementById("ow_username").value;
-	 var ow_password = document.getElementById("ow_password").value;
-	 var url = "<?php echo site_url()?>/wp-content/plugins/onlywire-bookmark-share-button/http_auth_call.php?auth_user="+encodeURIComponent(ow_username.trim())+"&auth_pw="+encodeURIComponent(ow_password.trim());
-	 var xmlhttp;
-	
-	if (window.XMLHttpRequest)
-  	{// code for IE7+, Firefox, Chrome, Opera, Safari
- 		xmlhttp=new XMLHttpRequest();
-  	}
-	else
-  	{	// code for IE6, IE5
-  		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  	}
-  
-	xmlhttp.onreadystatechange=function()
-  	{   		
-  		if (xmlhttp.readyState==4 && xmlhttp.status == 200)
-    	{ 
-			if(xmlhttp.responseText == 1){
-				 func();
-				 return false; 
-			} else {
-				alert("Invalid Username or Password. \nPlease provide correct login Information.");
-				 return false;
-			}
-    	}
-  	}
+        function resize_iframe()
+        {
 
-	xmlhttp.open("GET",url,true);
-	xmlhttp.send();
-}
-function func() {
-    var ow_iframe_doc = getFrameDocument("ow_iframe"); 
-    var ow_iframe_win = document.getElementById("ow_iframe").contentWindow;
-    
-    var buttonform = ow_iframe_doc.getElementById("thebuttonform");
-    //we must call this javascript from within the iframe, this builds the POST data values
-    ow_iframe_win.$('selections').value = ow_iframe_win.buildButtonId();
-    
-    // call the local buttonid.php (ajax) file to make a request with the data from the form to onlywire, and get back the buttonid
-    var s = serialize(buttonform);
-    var myRequest = new ajaxObject("<?php echo site_url()?>/wp-content/plugins/onlywire-bookmark-share-button/buttonid.php", processData);
-    myRequest.update(s);  // Server is contacted here.
-}
+            var height = window.innerWidth;//Firefox
+            if (document.body.clientHeight)
+            {
+                height = document.body.clientHeight;//IE
+            }
+            document.getElementById("glu").style.height = parseInt(height -
+                    document.getElementById("glu").offsetTop - 8) + "px";
+        }
+
+        window.onresize = resize_iframe;
     </script>
-	<div class="wrap">
-	<h2>OnlyWire Settings</h2>
-	
-		<form id="ow_form" method="post" action="options.php" onSubmit="auth(); return false;">
-			<?php wp_nonce_field('update-options'); ?>
-			<?
-            $code_form = get_option('ow_script');
-			$temp = explode("script>", $code_form);	
-			?>
-            <input id="ow_script" type="hidden" name="ow_script" value="<?=$temp[4]?>" />
 
-			<table class="form-table">
-				<tr valign="top">
-					<th style="white-space:nowrap;" scope="row"><label for="ow_username"><?php _e("OnlyWire username"); ?>:</label></th>
-					<td><input id="ow_username" type="text" name="ow_username" value="<?php echo get_option('ow_username'); ?>" /></td>
-					<td style="width:100%;">The username you use to login on OnlyWire.com.</td>
-				</tr>
-				
-				<tr valign="top">
-					<th style="white-space:nowrap;" scope="row"><label for="ow_password"><?php _e("OnlyWire password"); ?>:</label></th>
-					<td><input id="ow_password" type="password" name="ow_password" value="<?php echo get_option('ow_password'); ?>" /></td>
-					<td style="width:100%;">The password you use to login on OnlyWire.com.</td>
-				</tr>
-				<tr valign="top">
-					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost"><?php _e("Auto Post All Articles"); ?>:</label></th>
-					<td><input id="ow_autopost" type="checkbox" name="ow_autopost" <?php if(get_option('ow_autopost') == 'on') { echo 'checked="true"'; }?> /></td>
-					<td style="width:100%;"></td>
-				</tr>
-				<tr valign="top">
-					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_revisions"><?php _e("Auto Post All Article Revisions"); ?>:</label></th>
-					<td style="vertical-align: bottom;"><input id="ow_autopost_revisions" type="checkbox" name="ow_autopost_revisions" onclick="verifyAutoRevisions()" <?php echo get_option('ow_autopost_revisions')=='on'?'checked="checked"':''; ?> /></td>
-					<td style="width:100%;"><font style="color:red">&#42;</font>&nbsp;OnlyWire <strong>does <em>not</em></strong> recommend enabling this option.</td>
-				</tr>
-				<tr valign="top">
-					<th style="white-space:nowrap;" scope="row"><label for="ow_autopost_enable"><?php _e("Show Bookmark & Share Button"); ?>:</label></th>
-					<td style="vertical-align: bottom;"><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php if(get_option('ow_autopost_enable') == 'on') { echo 'checked="true"'; }?> /></td>
-					<td style="width:100%;"></td>
-				</tr>
-			</table>
-            <iframe id="ow_iframe" src="<?php echo site_url()."/wp-content/plugins/onlywire-bookmark-share-button/iframe.php"?>" style="width: 100%; height: 710px;" ></iframe>
-	
-			<input type="hidden" name="action" value="update" />
-			<input type="hidden" name="page_options" value="ow_username,ow_password,ow_autopost,ow_autopost_revisions,ow_script,ow_autopost_enable" />
-	
-			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-			</p>
-		</form>
-	</div>
+    <div class="wrap" style="
+         padding: 10px;
+         background: #fcfcfc;
+         border: 1px solid #e5e5e5;
+         font-size: 13px;
+         ">
 
-<?php
+        <div class="ow_header" style="
+             width: 99%;
+             display: block;
+             padding: 0px 10px 7px 10px;
+             margin: 0px;
+             border-bottom: 1px solid #e5e5e5;
+             ">
+            <a href="<?php echo SITE_URL; ?>" target="_blank"><img src="https://d5k6iufjynyu8.cloudfront.net/img/logo/logo.400.png" style="width: 175px;" /></a>  
+            <?php
+            $userInfo = "";
+            if (get_option('ow_username') != "")
+            {
+                $userInfo = getUser(get_option('ow_username'), get_option('ow_password'));
+                if ($userInfo->success)
+                {
+                    ?>
+                    <span class="submission-info" style="padding: 7px;font-size: 14px;font-weight: bold; float: right;border-radius: 5px;background: #fff;-webkit-border-radius: 5px;-moz-border-radius: 5px; border: 1px solid #e5e5e5">Submission Usage: <span style="color: #666666;"><?php echo $userInfo->submission_used ?> / <?php echo $userInfo->submission_limit ?></span></span>    
+                    <?php
+                }
+            }
+            ?>
+        </div>
+        <?php if (get_option('ow_username') != "")
+        { ?>
+            <ul style="margin-top: 25px; margin-left: 40px; float: right; position: absolute; right: 20px;">
+                <li style="margin: 5px; float: left;"><a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/my/dashboard" target="_blank">OnlyWire Dashboard</a></li>
+                <li style="margin: 5px; float: left;"><a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/add/network" target="_blank">Add/Remove Networks</a></li>
+                <li style="margin: 5px; float: left;"><a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/support" target="_blank">Support</a></li>
+            </ul>
+        <?php } ?>
+        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #e5e5e5; padding-bottom: 0px; margin-top: 10px; margin-left: 10px;">Settings</h2>
+        
+        <?php
+        if (!$userInfo->success)
+        {
+            ?>
+            <div style="
+                 padding: 5px 35px 5px 14px;
+                 margin-bottom: 5px;
+                 text-shadow: none;
+                 border: 1px solid #fbeed5;
+                 -webkit-border-radius: 2px;
+                 -moz-border-radius: 2px;
+                 border-radius: 2px;
+                 font-weight: 300 !important; font-size: 14px !important;
+                 font-weight: normal !important;
+                 color: rgb(228, 0, 0) !important;
+                 background-color: #f2dede;
+                 border-color: #eed3d7;
+                 margin-top: 10px;
+                 ">
+                Please correct your OnlyWire Username/Password.
+            </div>
+
+            <?php
+        }
+        else if ($userInfo != "")
+        {
+            if ($userInfo->account_status != 1)
+            {
+                ?>
+                <div style="
+                     padding: 5px 35px 5px 14px;
+                     margin-bottom: 5px;
+                     text-shadow: none;
+                     border: 1px solid #fbeed5;
+                     -webkit-border-radius: 2px;
+                     -moz-border-radius: 2px;
+                     border-radius: 2px;
+                     font-weight: 300 !important; font-size: 14px !important;
+                     font-weight: normal !important;
+                     color: rgb(228, 0, 0) !important;
+                     background-color: #f2dede;
+                     border-color: #eed3d7;
+                     margin-top: 10px;
+                     ">
+                    Account Status: <?php echo $userInfo->account_status_desc; ?> (<a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/my/account" target="_blank">Update</a>)
+                </div>
+                <?php
+            }
+        }
+        else
+        {
+            ?>
+            <div style="
+                 padding: 5px 35px 5px 14px;
+                 margin-bottom: 5px;
+                 text-shadow: none;
+                 border: 1px solid #fbeed5;
+                 -webkit-border-radius: 2px;
+                 -moz-border-radius: 2px;
+                 border-radius: 2px;
+                 font-weight: 300 !important; font-size: 14px !important;
+                 font-weight: normal !important;
+                 color: rgb(228, 0, 0) !important;
+                 background-color: #f2dede;
+                 border-color: #eed3d7;
+                 margin-top: 10px;
+                 ">
+                To start using this plugin, please enter your OnlyWire Username and Password in the fields below and select save changes.
+            </div>
+            <?php
+        }
+        ?>
+        <form id="ow_form" method="post" action="options.php" onSubmit="auth();
+                return false;" style="border-bottom: 1px solid #e5e5e5;">
+              <?php wp_nonce_field('update-options'); ?>
+              <?php
+              $code_form = get_option('ow_script');
+              $temp      = explode("script>", $code_form);
+              ?>
+            <input id="ow_script" type="hidden" name="ow_script" value="<?php echo $temp[4]; ?>" />
+
+            <table class="form-table">
+                <tr>
+                    <td colspan="2"><h3 style="margin-bottom: 0px;">Account Information</h3></td>
+                </tr>
+                <tr>
+                    <th style="white-space:nowrap; vertical-align: middle;" scope="row"><label for="ow_username">
+                     <?php _e("OnlyWire Username"); ?>:</label></th>
+                    <td><input id="ow_username" type="text" name="ow_username" value="<?php echo get_option('ow_username'); ?>" 
+                               style="
+                               background-color: #ffffff;
+                               border: 1px solid #e5e5e5;
+                               -webkit-border-radius: 1px;
+                               -moz-border-radius: 1px;
+                               border-radius: 1px;
+                               padding: 5px;"
+                               />
+                    </td>
+
+                </tr>
+
+                <tr valign="top">
+                    <th style="white-space:nowrap;vertical-align: middle;" scope="row"><label for="ow_password"><?php _e("OnlyWire Password"); ?>:</label></th>
+                    <td><input  id="ow_password" type="password" name="ow_password" value="<?php echo get_option('ow_password'); ?>" 
+                                style="
+                                background-color: #ffffff;
+                                border: 1px solid #e5e5e5;
+                                -webkit-border-radius: 1px;
+                                -moz-border-radius: 1px;
+                                border-radius: 1px;
+                                padding: 5px;
+                                " />
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th style="white-space:nowrap;" scope="row">
+                        <label for="ow_autopost"><?php _e("Auto Post All Articles"); ?>:<br/>
+                            <span class="small-message" style="color: #999; font-weight: 300; font-size: 11px;">Post all newly created articles to the selected Networks.</span>
+                        </label></th>
+                    <td><input id="ow_autopost" type="checkbox" name="ow_autopost" <?php
+                               if (get_option('ow_autopost') == 'on')
+                               {
+                                   echo 'checked="true"';
+                               }
+                               ?> /></td>
+                    <td style="width:100%;"></td>
+                </tr>
+                <tr valign="top">
+                    <th style="white-space:nowrap;" scope="row">
+                        <label for="ow_autopost_enable">
+                        <?php _e("Show Bookmark & Share Button"); ?>:<br/>
+                            <span class="small-message" style="color: #999; font-weight: 300; font-size: 11px;">Display 'Bookmark & Share' Button under each article.</span>
+                        </label>
+                    </th>
+                    <td style="vertical-align: bottom;"><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php
+                        if (get_option('ow_autopost_enable') == 'on')
+                        {
+                            echo 'checked="true"';
+                        }
+                        ?> /></td>
+                    <td style="width:100%;">
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <h3 style="margin-bottom: 5px;">Networks ( <a style="color: #f26722; text-decoration: underline; font-weight: normal; font-size: 13px;" href="<?php echo SITE_URL; ?>wordpress/add/network" target="_blank">Manage</a> )</h3> 
+
+    <?php
+    $data = getServiceLogins(get_option('ow_username'), get_option('ow_password'));
+
+    if (count($data->networks) > 0)
+    {
+        ?>
+                            <a href="#" onclick="selectNone();">Deselect All</a>&nbsp;&nbsp;&nbsp;
+                            <a href="#" onclick="selectAll();">Select All</a>
+                            <div id="service_logins">
+                                    <?php
+                                    foreach ($data->networks as $network)
+                                    {
+                                        ?>
+
+                                    <div class="checkbox-wrap" style="display: block; float: left; width: 300px; margin: 10px;">
+                                        <input type="checkbox" id="<?php echo $network->id; ?>" name="service_logins[]"
+            <?php
+            $temp = explode(",", get_option('ow_service_logins'));
+            if (in_array($network->id, $temp))
+            {
+                echo " checked ";
+            }
+            ?>
+                                               value="<?php echo $network->id; ?>" style="float:left; margin: 5px 0px 5px 5px;"/>  
+                                        <div class="label-wrap" style="display: block; width: 250px;float: left;margin-left: 10px;">
+                                            <label for="<?php echo $network->id; ?>" style="font-weight: bold; margin-bottom: -5px; display: block; float: left;width: 300px;min-height: 60px;">
+                                                <img for="<?php echo $network->id; ?>" src="<?php echo $network->icon; ?>" style="float: left; width: 40px; margin: 5px;"/>
+                                                    <?php echo $network->name ?>
+                                                <br/>
+                                                <span style="margin-top: -5px;float: left;color: #999; font-weight: 300;text-overflow: ellipsis;white-space: nowrap;overflow: hidden; width: 50%"><?php echo $network->description; ?></span> <br/>
+                                                <span style="margin-top: -10px;font-weight: normal; color: #d83526; font-size: 12px; float: left;"> 
+                                                    <?
+                                                    if ($network->status != NULL)
+                                                    {
+                                                        ?>
+                                                        Incorrect login. <a href="<?php echo SITE_URL; ?>wordpress/correct/login/<?php echo $network->id; ?>" target="_blank" style="text-decoration: underline;">Correct it</a> 
+                                        <?php
+                                    }
+                                    ?>
+                                                </span>
+                                            </label> 
+                                        </div>
+                                    </div>
+
+                                <?php
+                            }
+                            ?>
+                            </div>    
+                            <?php
+                        }
+                        elseif (!get_option('ow_username'))
+                        {
+                            ?>
+                            <div class="no-networks" style="width: 98%; border: 1px solid #e5e5e5; padding: 20px; text-align: left; font-size: 13px; ">Please add your username and password above to see your networks</div>
+        <?php
+    }
+    else
+    {
+        ?>
+
+                            <div class="no-networks" style="width: 98%; border: 1px solid #e5e5e5; padding: 20px; text-align: left; font-size: 13px; ">
+
+                                You do not have any networks setup. <br/>
+
+                                <a href="<?php echo SITE_URL; ?>wordpress/add/network" style="
+                                   display: inline-block;
+                                   padding: 4px 12px;
+                                   margin-bottom: 0;
+                                   font-size: 13px;
+                                   line-height: 20px;
+                                   color: #333333;
+                                   text-align: center;
+                                   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                                   vertical-align: middle;
+                                   cursor: pointer;
+                                   background: #eeeeee;
+                                   border: 1px solid #ccc;
+                                   -webkit-border-radius: 2px;
+                                   -moz-border-radius: 2px;
+                                   border-radius: 2px;
+                                   margin-top: 10px;
+                                   -webkit-box-shadow: none;
+                                   box-shadow: none;
+                                   -moz-box-shadow: none;
+                                   padding: 2px 10px;
+                                   height: auto;
+                                   " class="button-primary" target="_blank">Add Network</a>
+
+                            </div>
+
+        <?php
+    }
+    ?>
+
+                    </td>
+                </tr>
+            </table>
+
+
+            <input type="hidden" name="ow_service_logins" id="ow_service_logins" value="" />
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="page_options" value="ow_username,ow_password,ow_service_logins,ow_autopost,ow_autopost_revisions,ow_script,ow_autopost_enable" />
+
+            <p class="submit">
+                <input type="submit" style="
+                       background: #f26722;
+                       -moz-border-radius: 3px;
+                       -webkit-border-radius: 3px;
+                       border-radius: 3px;
+                       border: 1px solid #d83526;
+                       display: inline-block;
+                       color: #ffffff !important;
+                       font-size: 13px;
+                       padding: 2px 10px;
+                       text-decoration: none;
+                       font-weight: 300;
+                       text-shadow: none;
+                       min-width: 60px;
+                       text-align: center;
+                       -webkit-box-shadow: none;
+                       box-shadow: none;
+                       height: auto;
+                       -moz-box-shadow: none;
+                       " class="button-primary" value="<?php _e('Save Changes') ?>" />
+            </p>
+        </form>
+
+        <iframe src="<?php echo SITE_URL; ?>wordpress/promo?u=<?php echo base64_encode(get_option('ow_username')); ?>" id="glu" width="100%" style="min-height: 400px;" onload="resize_iframe()"></iframe>
+
+    </div>
+
+    <div style="margin-top: 10px; color: #666666;">
+        © 2013 OnlyWire, LLC.&nbsp;&nbsp;All Rights Reserved. U.S. Patent Numbers 8,161,102 and 8,359,352.             
+    </div>
+
+    <?php
 }
 
 /**
@@ -329,16 +489,17 @@ function func() {
  * http://wordpress.org/extend/plugins/revision-control/
  * Determines the post/page's ID based on the 'post' and 'post_ID' POST/GET fields.
  */
-function ow_get_page_id() {
-	foreach ( array( 'post_ID', 'post' ) as $field )
-		if ( isset( $_REQUEST[ $field ] ) )
-			return absint($_REQUEST[ $field ]);
+function ow_get_page_id()
+{
+    foreach (array('post_ID', 'post') as $field)
+        if (isset($_REQUEST[$field]))
+            return absint($_REQUEST[$field]);
 
-	if ( isset($_REQUEST['revision']) )
-		if ( $post = get_post( $id = absint($_REQUEST['revision']) ) )
-			return absint($post->post_parent);
+    if (isset($_REQUEST['revision']))
+        if ($post = get_post($id   = absint($_REQUEST['revision'])))
+            return absint($post->post_parent);
 
-	return false;
+    return false;
 }
 
 /**
@@ -348,34 +509,111 @@ function ow_get_page_id() {
 function ow_posting()
 {
     global $post_ID;
-    
-    $ow_post_type_id = get_post(ow_get_page_id());
-    $ow_post_type = $ow_post_type_id->post_status;
 
-    //Check to see if it's a revision ("auto-draft" or "draft" return type is a new post)
-    if ( ($ow_post_type != 'auto-draft') && ($ow_post_type != 'draft') ){	
-?>
-    <label for="ow_post">
-        <input type="checkbox" <?php echo get_option('ow_autopost_revisions')=='on'?'checked="checked"':''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
-    </label>
-    
-<?php	
-    } else {
-?>	    
-   <label for="ow_post">
-        <input type="checkbox" <?php echo get_option('ow_autopost')=='on'?'checked="checked"':''; ?> id="ow_post" name="ow_post" /> Post this to OnlyWire	
-    </label>
-<?php
+    $ow_post_type_id = get_post(ow_get_page_id());
+    $ow_post_type    = $ow_post_type_id->post_status;
+
+    $networks = getServiceLogins(get_option('ow_username'), get_option('ow_password'));
+    $userInfo = getUser(get_option('ow_username'), get_option('ow_password'));
+    if ($userInfo != "")
+    {
+        if ($userInfo->account_status != 1)
+        {
+            ?>
+            <div style="
+                 padding: 5px 35px 5px 14px;
+                 margin-bottom: 5px;
+                 text-shadow: none;
+                 border: 1px solid #fbeed5;
+                 -webkit-border-radius: 2px;
+                 -moz-border-radius: 2px;
+                 border-radius: 2px;
+                 font-weight: 300 !important; font-size: 14px !important;
+                 font-weight: normal !important;
+                 color: rgb(228, 0, 0) !important;
+                 background-color: #f2dede;
+                 border-color: #eed3d7;
+                 margin-top: 10px;
+                 ">
+                OnlyWire Account Status: <?php echo $userInfo->account_status_desc; ?> (<a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/my/account" target="_blank">Update</a>)
+            </div>
+            <?php
+        }
+        else
+        {
+            if (count($networks->networks) > 0)
+            {
+                //Check to see if it's a revision ("auto-draft" or "draft" return type is a new post)
+                if (($ow_post_type != 'auto-draft') && ($ow_post_type != 'draft'))
+                {
+                    ?>
+                    <label for="ow_post">
+                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+                    </label>
+
+                    <?php
+                }
+                else
+                {
+                    ?>	    
+                    <label for="ow_post">
+                        <input type="checkbox" <?php echo get_option('ow_autopost') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this to OnlyWire	
+                    </label>
+                    <?php
+                }
+            }
+            else
+            {
+                ?>
+                <div class="no-networks" style="width: 95%; border: 1px solid #e5e5e5; padding: 20px; text-align: left; font-size: 13px; font-weight: 300 !important; font-size: 14px !important;
+                     font-weight: normal !important;
+                     color: rgb(228, 0, 0) !important;
+                     background-color: #f2dede;
+                     border-color: #eed3d7; ">
+
+                    You do not have any networks setup. <br/>
+
+                    <a href="<?php echo SITE_URL; ?>wordpress/add/network" style="
+                       display: inline-block;
+                       padding: 4px 12px;
+                       margin-bottom: 0;
+                       font-size: 13px;
+                       line-height: 20px;
+                       color: #333333;
+                       text-align: center;
+                       text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                       vertical-align: middle;
+                       cursor: pointer;
+                       background: #eeeeee;
+                       border: 1px solid #ccc;
+                       -webkit-border-radius: 2px;
+                       -moz-border-radius: 2px;
+                       border-radius: 2px;
+                       margin-top: 10px;
+                       -webkit-box-shadow: none;
+                       box-shadow: none;
+                       -moz-box-shadow: none;
+                       padding: 2px 10px;
+                       height: auto;
+
+                       " class="button-primary" target="_blank">Add Network</a>
+
+                </div>
+                <?
+            }
     }
+    }
+    
 }
 
 /**
  * Return a random tag if none are supplied in the post
  */
-function getDefaultTag() {
-    $tags = array("bookmark","favorite","blog","social","web","internet","share","organize","manage","reference","tag","save");
-    $rand_keys = array_rand($tags,2);
-    
+function getDefaultTag()
+{
+    $tags      = array("bookmark", "favorite", "blog", "social", "web", "internet", "share", "organize", "manage", "reference", "tag", "save");
+    $rand_keys = array_rand($tags, 2);
+
     return $tags[$rand_keys[0]];
 }
 
@@ -383,83 +621,54 @@ function getDefaultTag() {
  * @param The post ID
  * Posts this post to OnlyWire
  */
-function ow_post( $postID )
+function ow_post($postID)
 {
-	global $wpdb;
+    global $wpdb;
 
-	// Get the correct post ID if revision.
-	if ( $wpdb->get_var("SELECT post_type FROM $wpdb->posts WHERE ID=$postID")=='revision') {
-		$postID = $wpdb->get_var("SELECT post_parent FROM $wpdb->posts WHERE ID=$postID");
-	}
+    // Get the correct post ID if revision.
+    if ($wpdb->get_var("SELECT post_type FROM $wpdb->posts WHERE ID=$postID") == 'revision')
+    {
+        $postID = $wpdb->get_var("SELECT post_parent FROM $wpdb->posts WHERE ID=$postID");
+    }
 
-    
-    if(isset($_POST['ow_post']) && $_POST['ow_post'] == 'on') {
+
+    if (isset($_POST['ow_post']) && $_POST['ow_post'] == 'on')
+    {
         // the checkbox is selected, let's post to onlywire with user credentials
         $username = get_option('ow_username');
         $password = get_option('ow_password');
-        if($username && $password) {
-            // we have credentials, let's login on Onlywire with this account and post the $postID
-            $password = array($username, md5($password));
-            $data = array();
-            $data['token'] = implode('%26', $password);
+        if ($username && $password)
+        {
 
-            // get the services
-            $gservices = GetRequest("http://www.onlywire.com/widget/getWidgetData.php?token=".$data['token']);
-            // gservices is not "jsonp(..);" let's remove "jsonp(" and ");"
-            $gservices = str_replace('jsonp(','',$gservices[1]);
-            $gservices = str_replace(');','',$gservices);
-            $jservices = json_decode($gservices,true);
+            $post      = get_post($postID);
+            $tagstring = "";
+            $prefix    = '';
 
-            // $jservices->services is an array of objects
-            $service_ids = array();
-            foreach($jservices['services'] as $jobj) {
-                array_push($service_ids, $jobj['pk_id']);
+            foreach (get_the_tags($post->ID) as $tag)
+            {
+                $tagstring .= $prefix.$tag->name;
+                $prefix = ',';
             }
-            $services =  implode(',',$service_ids);
 
-            $data['service'] = $services; 
+            $d                   = 'm\/d\/Y h\:i\:s T';
+            $data['url']         = urlencode(get_permalink($postID));
+            $data['title']       = trim(urlencode($post->post_title));
+            $data['description'] = strip_tags(trim(urlencode($post->post_content)));
+            $data['tags']        = trim($tagstring);
+            $data['scheduled']   = urlencode(get_post_time($d, true, $post, false));
 
-            $post = get_post($postID); 
-            $tags = get_the_tags($postID);
-            if($tags) {
-                 $tagarr = array();
-                 // build tags string
-                 foreach($tags as $tag) {
-                     array_push($tagarr, str_replace(' ', '-', $tag->name));
-                 }
-                 $tagstring = implode(' ', $tagarr);
-            } else {
-                   $tagstring = getDefaultTag();
+            if (strlen($data['description']) > 250)
+            {
+                $data['description'] = substr($data['description'], 0, 250)."...";
             }
-			
-			$categories = get_the_category($postID);
-			$categorystring = '';
-			if($categories) {
-				$categoryarr = array();
-				// build category string
-				foreach($categories as $category)
-				{
-					array_push($categoryarr, str_replace(' ', '-', $category->name));
-				}
-				
-				$categorystring = implode(' ', $categoryarr);
-			}
-			
-			if(trim($categorystring) != '') {
-				$tagstring = $tagstring.' '.$categorystring;
-			}	
-						
-            $data['url'] = urlencode(get_permalink($postID));
-            $data['title'] = urlencode($post->post_title);
-            $data['tags'] = $tagstring;
-            $d = 'm\/d\/Y H\.i T';
-            $data['scheduledtime'] = get_post_time($d,true,$postID,false);
 
-            $a = PostRequest("http://www.onlywire.com/b/saveurl2.php","", $data);
+            if (get_option('ow_service_logins') != false)
+            {
+                $data['networks'] = trim(get_option('ow_service_logins'));
+            }
 
+            createBookmark($data, $username, $password);
         }
     }
-
 }
-
 ?>
