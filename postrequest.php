@@ -13,7 +13,6 @@ function createBookmark($data, $username, $password){
 
     $ch = curl_init();
 
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -32,7 +31,6 @@ function getServiceLogins($username, $password){
     $query = SITE_URL."api/v2/user/networks";
     $ch    = curl_init();
 
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -51,7 +49,7 @@ function getUser($username, $password, $url = ""){
     $query = SITE_URL."api/v2/user/info";
     
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -68,7 +66,7 @@ function checkUser($username, $password){
     $query = SITE_URL."api/v2/user/info";
     
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
