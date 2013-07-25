@@ -643,11 +643,14 @@ function ow_post($postID)
             $post      = get_post($postID);
             $tagstring = "";
             $prefix    = '';
-
+		
+			if(get_the_tags($post->ID))
+			{
             foreach (get_the_tags($post->ID) as $tag)
             {
                 $tagstring .= $prefix.$tag->name;
                 $prefix = ',';
+            }
             }
 
             $d                   = 'm\/d\/Y h\:i\:s T';
