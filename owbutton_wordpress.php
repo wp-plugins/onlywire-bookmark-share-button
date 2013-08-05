@@ -656,14 +656,18 @@ function ow_post($postID)
             $d                   = 'm\/d\/Y h\:i\:s T';
             $data['url']         = urlencode(get_permalink($postID));
             $data['title']       = trim(urlencode($post->post_title));
-            $data['description'] = strip_tags(trim(urlencode($post->post_content)));
             $data['tags']        = trim($tagstring);
             $data['scheduled']   = urlencode(get_post_time($d, true, $post, false));
 
-            if (strlen($data['description']) > 250)
+            if (strlen(strip_tags($post->post_content)) > 250)
             {
-                $data['description'] = substr($data['description'], 0, 250)."...";
+                $data['description'] = substr(strip_tags($post->post_content), 0, 250)."...";
             }
+	    else
+	    {
+		$data['description'] = strip_tags($post->post_content);
+	    }	
+		
 
             if (get_option('ow_service_logins') != false)
             {
