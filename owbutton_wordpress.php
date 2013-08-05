@@ -661,11 +661,11 @@ function ow_post($postID)
 
             if (strlen(strip_tags($post->post_content)) > 250)
             {
-                $data['description'] = substr(strip_tags($post->post_content), 0, 250)."...";
+                $data['description'] = urlencode(substr(strip_tags($post->post_content), 0, 250)."...");
             }
 	    else
 	    {
-		$data['description'] = strip_tags($post->post_content);
+		$data['description'] = urlencode(strip_tags($post->post_content));
 	    }	
 		
 
