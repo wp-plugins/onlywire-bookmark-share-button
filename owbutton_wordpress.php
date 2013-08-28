@@ -1,6 +1,3 @@
-<?php
-/*
-  Plugin Name: OnlyWire for WordPress [OFFICIAL]
   Plugin URI: http://www.onlywire.com/
   Description: Easily post to millions of sites with one button.
   Version: 1.6.9
@@ -45,6 +42,7 @@ function ow_activate()
     add_option('ow_script');
     add_option('ow_autopost_enable');
     update_option('ow_autopost_enable', 'on');
+    update_option('ow_autopost_revisions', 'on');	
 }
 
 /**
