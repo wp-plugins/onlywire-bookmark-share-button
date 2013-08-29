@@ -54,7 +54,7 @@ function ow_activate()
  * Post admin hooks
  */
 add_action('admin_menu', "ow_adminInit");
-add_action('save_post', 'ow_post');
+//add_action('save_post', 'ow_post');
 add_filter('plugin_action_links', 'ow_settings_link', 10, 2);
 
 /**
