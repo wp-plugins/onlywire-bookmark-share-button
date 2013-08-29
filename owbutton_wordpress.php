@@ -1,3 +1,4 @@
+<?php
 /* 
   Plugin URI: http://www.onlywire.com/
   Description: Easily post to millions of sites with one button.
