@@ -38,11 +38,11 @@ function ow_activate()
     add_option('ow_password');
     add_option('ow_service_logins');
     add_option('ow_autopost');
-    add_option('ow_autopost_revisions');
+    add_option('ow_autopost_revisions_now');
     add_option('ow_script');
     add_option('ow_autopost_enable');
     update_option('ow_autopost_enable', 'on');
-    update_option('ow_autopost_revisions', 'on');	
+    update_option('ow_autopost_revisions_now', 'on');	
 }
 
 /**
@@ -87,8 +87,8 @@ function ow_optionsAdmin()
     <script>
         function verifyAutoRevisions() {
 
-            if (document.getElementById("ow_autopost_revisions").checked) {
-                confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions").checked = true : document.getElementById("ow_autopost_revisions").checked = false;
+            if (document.getElementById("ow_autopost_revisions_now").checked) {
+                confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions_now").checked = true : document.getElementById("ow_autopost_revisions_now").checked = false;
             }
         }
         function auth() {
@@ -445,7 +445,7 @@ function ow_optionsAdmin()
 
             <input type="hidden" name="ow_service_logins" id="ow_service_logins" value="" />
             <input type="hidden" name="action" value="update" />
-            <input type="hidden" name="page_options" value="ow_username,ow_password,ow_service_logins,ow_autopost,ow_autopost_revisions,ow_script,ow_autopost_enable" />
+            <input type="hidden" name="page_options" value="ow_username,ow_password,ow_service_logins,ow_autopost,ow_autopost_revisions_now,ow_script,ow_autopost_enable" />
 
             <p class="submit">
                 <input type="submit" style="
@@ -546,7 +546,7 @@ function ow_posting()
                 {
                     ?>
                     <label for="ow_post">
-                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions_now') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
                     </label>
 
                     <?php
