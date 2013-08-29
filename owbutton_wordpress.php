@@ -1,11 +1,12 @@
 <?php
- /* 
-  Plugin URI: http://www.onlywire.com/
-  Description: Easily post to millions of sites with one button.
-  Version: 1.6.9
-  Author: OnlyWire Engineering
-  Author URI: http://www.onlywire.com/
- */
+/*
+Plugin Name: OnlyWire for WordPress [OFFICIAL]
+Plugin URI: http://www.onlywire.com/
+Description: Easily post to millions of sites with one button. 
+Version: 1.6.9
+Author: OnlyWire Engineering
+Author URI: https://www.onlywire.com/
+*/
 
 $wpURL = get_bloginfo('wpurl');
 
