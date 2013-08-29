@@ -43,6 +43,7 @@ function ow_activate()
     add_option('ow_service_logins');
     add_option('ow_autopost');
     add_option('ow_autopost_revisions_now');
+    add_option('ow_autopost_revisions');
     add_option('ow_script');
     add_option('ow_autopost_enable');
     update_option('ow_autopost_enable', 'on');
@@ -55,6 +56,7 @@ function ow_activate()
 add_action('admin_menu', "ow_adminInit");
 add_action('publish_post', 'ow_post');
 add_action('future_post', 'ow_post');
+add_action('save_post', 'ow_post');
 add_filter('plugin_action_links', 'ow_settings_link', 10, 2);
 
 /**
@@ -79,8 +81,7 @@ function ow_adminInit()
 {
     if (function_exists("add_meta_box"))
         add_meta_box("onlywire-post", "OnlyWire Bookmark &amp; Share", "ow_posting", "post", "normal", "high");
-
-    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
+   	    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
 }
 
 function ow_optionsAdmin()
@@ -626,13 +627,11 @@ function getDefaultTag()
 function ow_post($postID)
 {
     global $wpdb;
-
     // Get the correct post ID if revision.
     if ($wpdb->get_var("SELECT post_type FROM $wpdb->posts WHERE ID=$postID") == 'revision')
     {
         $postID = $wpdb->get_var("SELECT post_parent FROM $wpdb->posts WHERE ID=$postID");
     }
-
 
     if (isset($_POST['ow_post']) && $_POST['ow_post'] == 'on')
     {
