@@ -9,6 +9,7 @@
 
 $wpURL = get_bloginfo('wpurl');
 
+//includes
 include ("config.php");
 include ("postrequest.php");
 
