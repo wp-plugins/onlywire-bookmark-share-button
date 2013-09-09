@@ -3,8 +3,8 @@ Contributors: craiglurey
 Donate link: https://onlywire.com
 Tags: Facebook,twitter,social media solution,social media optimization,social media strategy,social media monitoring,social media marketing,social media campaigns,social media tracking,social media app,social media website,social media manager,social media service,social media automation,multiple twitter,multiple facebook,onlywire,social bookmarking,blogging,social media promotion 
 Requires at least: 2.5
-Tested up to: 3.5.2
-Stable tag: 1.6.9
+Tested up to: 3.6
+Stable tag: 1.7
 
 OnlyWire is a fast, secure automation tool to submit content to the top Social Media Networks like Facebook, Twitter and Google+. Use OnlyWire to save time, automate your website's content and engage your followers.
 
@@ -35,6 +35,11 @@ Visit our FAQ at https://www.onlywire.com/support/category/for/faq
 1. OnlyWire Settings page on your WordPress Admin Panel.
 
 == Changelog ==
+= 1.7 =
+* New version for Wordpress 3.6
+* Fixed Bugs.
+* Changes in interface
+
 = 1.6.9 =
 * New version for Wordpress 3.5.2
 * Fixed Bugs.

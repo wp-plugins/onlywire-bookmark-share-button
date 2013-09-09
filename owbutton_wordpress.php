@@ -1,15 +1,16 @@
 <?php
 /*
-  Plugin Name: OnlyWire for WordPress [OFFICIAL]
-  Plugin URI: http://www.onlywire.com/
-  Description: Easily post to millions of sites with one button.
-  Version: 1.6.9
-  Author: OnlyWire Engineering
-  Author URI: http://www.onlywire.com/
- */
+Plugin Name: OnlyWire for WordPress [OFFICIAL]
+Plugin URI: http://www.onlywire.com/
+Description: Easily post to millions of sites with one button. 
+Version: 1.7
+Author: OnlyWire Engineering
+Author URI: https://www.onlywire.com/
+*/
 
 $wpURL = get_bloginfo('wpurl');
 
+//includes
 include ("config.php");
 include ("postrequest.php");
 
@@ -41,10 +42,12 @@ function ow_activate()
     add_option('ow_password');
     add_option('ow_service_logins');
     add_option('ow_autopost');
+    add_option('ow_autopost_revisions_now');
     add_option('ow_autopost_revisions');
     add_option('ow_script');
     add_option('ow_autopost_enable');
     update_option('ow_autopost_enable', 'on');
+    update_option('ow_autopost_revisions_now', 'on');	
 }
 
 /**
@@ -52,7 +55,7 @@ function ow_activate()
  */
 add_action('admin_menu', "ow_adminInit");
 add_action('publish_post', 'ow_post');
-add_action('future_post', 'ow_post');
+add_action('future_post','ow_post');
 add_filter('plugin_action_links', 'ow_settings_link', 10, 2);
 
 /**
@@ -77,8 +80,7 @@ function ow_adminInit()
 {
     if (function_exists("add_meta_box"))
         add_meta_box("onlywire-post", "OnlyWire Bookmark &amp; Share", "ow_posting", "post", "normal", "high");
-
-    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
+   	    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
 }
 
 function ow_optionsAdmin()
@@ -89,8 +91,8 @@ function ow_optionsAdmin()
     <script>
         function verifyAutoRevisions() {
 
-            if (document.getElementById("ow_autopost_revisions").checked) {
-                confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions").checked = true : document.getElementById("ow_autopost_revisions").checked = false;
+            if (document.getElementById("ow_autopost_revisions_now").checked) {
+                confirm("Enabling this option may cause you to be banned from bookmarking services for excessive submissions.\n\n\'Cancel\' to stop, \'OK\' to enable it.") ? document.getElementById("ow_autopost_revisions_now").checked = true : document.getElementById("ow_autopost_revisions_now").checked = false;
             }
         }
         function auth() {
@@ -169,9 +171,15 @@ function ow_optionsAdmin()
         <div class="ow_header" style="
              width: 99%;
              display: block;
-             padding: 0px 10px 7px 10px;
+             padding: 13px 10px 7px 10px;
              margin: 0px;
              border-bottom: 1px solid #e5e5e5;
+             background-color: #f0f0f0 !important;
+border-bottom: 1px solid #ccc;
+background-image: -o-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+background-image: -moz-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+background-image: -webkit-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
              ">
             <a href="<?php echo SITE_URL; ?>" target="_blank"><img src="https://d5k6iufjynyu8.cloudfront.net/img/logo/logo.400.png" style="width: 175px;" /></a>  
             <?php
@@ -447,7 +455,7 @@ function ow_optionsAdmin()
 
             <input type="hidden" name="ow_service_logins" id="ow_service_logins" value="" />
             <input type="hidden" name="action" value="update" />
-            <input type="hidden" name="page_options" value="ow_username,ow_password,ow_service_logins,ow_autopost,ow_autopost_revisions,ow_script,ow_autopost_enable" />
+            <input type="hidden" name="page_options" value="ow_username,ow_password,ow_service_logins,ow_autopost,ow_autopost_revisions_now,ow_script,ow_autopost_enable" />
 
             <p class="submit">
                 <input type="submit" style="
@@ -548,7 +556,7 @@ function ow_posting()
                 {
                     ?>
                     <label for="ow_post">
-                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions_now') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
                     </label>
 
                     <?php
@@ -624,13 +632,11 @@ function getDefaultTag()
 function ow_post($postID)
 {
     global $wpdb;
-
     // Get the correct post ID if revision.
     if ($wpdb->get_var("SELECT post_type FROM $wpdb->posts WHERE ID=$postID") == 'revision')
     {
         $postID = $wpdb->get_var("SELECT post_parent FROM $wpdb->posts WHERE ID=$postID");
     }
-
 
     if (isset($_POST['ow_post']) && $_POST['ow_post'] == 'on')
     {
@@ -648,7 +654,7 @@ function ow_post($postID)
 			{
             foreach (get_the_tags($post->ID) as $tag)
             {
-                $tagstring .= $prefix.$tag->name;
+                $tagstring .= $prefix.str_replace(" ","-",trim($tag->name));
                 $prefix = ',';
             }
             }
@@ -656,14 +662,18 @@ function ow_post($postID)
             $d                   = 'm\/d\/Y h\:i\:s T';
             $data['url']         = urlencode(get_permalink($postID));
             $data['title']       = trim(urlencode($post->post_title));
-            $data['description'] = strip_tags(trim(urlencode($post->post_content)));
             $data['tags']        = trim($tagstring);
             $data['scheduled']   = urlencode(get_post_time($d, true, $post, false));
 
-            if (strlen($data['description']) > 250)
+            if (strlen(strip_tags($post->post_content)) > 250)
             {
-                $data['description'] = substr($data['description'], 0, 250)."...";
+                $data['description'] = urlencode(substr(strip_tags($post->post_content), 0, 250)."...");
             }
+	    else
+	    {
+		$data['description'] = urlencode(strip_tags($post->post_content));
+	    }	
+		
 
             if (get_option('ow_service_logins') != false)
             {

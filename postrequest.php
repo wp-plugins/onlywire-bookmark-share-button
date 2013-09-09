@@ -77,6 +77,5 @@ function checkUser($username, $password){
     curl_close($ch);
     
     return $output;
-}
-   
+} 
 ?>
