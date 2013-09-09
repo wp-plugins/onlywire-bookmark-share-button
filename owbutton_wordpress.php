@@ -648,7 +648,7 @@ function ow_post($postID)
 			{
             foreach (get_the_tags($post->ID) as $tag)
             {
-                $tagstring .= $prefix.$tag->name;
+                $tagstring .= $prefix.str_replace(" ","-",trim($tag->name));
                 $prefix = ',';
             }
             }
