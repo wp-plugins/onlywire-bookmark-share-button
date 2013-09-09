@@ -556,7 +556,7 @@ function ow_posting()
                 {
                     ?>
                     <label for="ow_post">
-                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions_now') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+                        <input type="checkbox" id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
                     </label>
 
                     <?php
