@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: OnlyWire for WordPress [OFFICIAL]
-Plugin URI: http://www.onlywire.com/
-Description: Easily post to millions of sites with one button. 
-Version: 1.7
-Author: OnlyWire Engineering
-Author URI: https://www.onlywire.com/
+  Plugin Name: OnlyWire for WordPress [OFFICIAL]
+  Plugin URI: http://www.onlywire.com/
+  Description: Easily post to millions of sites with one button.
+  Version: 1.8
+  Author: OnlyWire Engineering
+  Author URI: https://www.onlywire.com/
 */
 
 $wpURL = get_bloginfo('wpurl');
 
 //includes
-include ("config.php");
+include ("owConfig.php");
 include ("postrequest.php");
 
 function ow_function($text)
@@ -23,7 +23,26 @@ function ow_function($text)
 
     if ($enable_button == 'on')
     {
-        $text .= '<script type="text/javascript" class="owbutton" src="https://www.onlywire.com/button" title="'.$post->post_title.'" url="'.get_permalink($post->ID).'"></script>';
+        $post      = get_post($postID);
+        $tagstring = "";
+
+        if (get_the_tags($post->ID))
+        {
+            foreach (get_the_tags($post->ID) as $tag)
+            {
+                $tagstring .= $prefix.str_replace(" ", "-", trim($tag->name));
+                $prefix = ',';
+            }
+        }
+        $url    = urlencode(get_permalink($post->ID));
+        $title  = trim(urlencode($post->post_title));
+        $tags   = trim($tagstring);
+
+        if (strlen(strip_tags($post->post_content)) > 250)
+        {
+            $description = urlencode(preg_replace("/\s+/", " ", substr(strip_tags($post->post_content), 0, 250)."..."));
+        }
+        $text .= '<a href="javascript: void(0);" class="onlywire-button wp" data-url="'.addslashes($url).'" data-title="'.addslashes($title).'" data-description="'.addslashes($description).'" data-tags="'.addslashes($tags).'" data-affid="WPOWPLUG"></a><script src="https://d5k6iufjynyu8.cloudfront.net/script/button.js" type="text/javascript"></script>';
     }
     return $text;
 }
@@ -44,10 +63,10 @@ function ow_activate()
     add_option('ow_autopost');
     add_option('ow_autopost_revisions_now');
     add_option('ow_autopost_revisions');
-    add_option('ow_script');
+    add_option('ow_script', 'on');
     add_option('ow_autopost_enable');
     update_option('ow_autopost_enable', 'on');
-    update_option('ow_autopost_revisions_now', 'on');	
+    update_option('ow_autopost_revisions_now', 'on');
 }
 
 /**
@@ -55,7 +74,7 @@ function ow_activate()
  */
 add_action('admin_menu', "ow_adminInit");
 add_action('publish_post', 'ow_post');
-add_action('future_post','ow_post');
+add_action('future_post', 'ow_post');
 add_filter('plugin_action_links', 'ow_settings_link', 10, 2);
 
 /**
@@ -80,15 +99,15 @@ function ow_adminInit()
 {
     if (function_exists("add_meta_box"))
         add_meta_box("onlywire-post", "OnlyWire Bookmark &amp; Share", "ow_posting", "post", "normal", "high");
-   	    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
+    add_options_page('OnlyWire Settings', 'OnlyWire Settings', 8, 'onlywireoptions', 'ow_optionsAdmin');
 }
 
 function ow_optionsAdmin()
 {
     ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL ?>css/wordpress.css"/>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>
+    var owQuery = $;
         function verifyAutoRevisions() {
 
             if (document.getElementById("ow_autopost_revisions_now").checked) {
@@ -119,10 +138,10 @@ function ow_optionsAdmin()
                     if (data.success === true) {
 
                         var comma_seperated_logins = [];
-                        $("input[name='service_logins[]']:checked").each(function() {
+                        owQuery("input[name='service_logins[]']:checked").each(function() {
                             comma_seperated_logins.push(this.value);
                         });
-                        $("#ow_service_logins").val(comma_seperated_logins);
+                        owQuery("#ow_service_logins").val(comma_seperated_logins);
 
                         document.getElementById("ow_form").submit();
                         return true;
@@ -139,11 +158,11 @@ function ow_optionsAdmin()
 
         /* This is fir select all checkboxes.*/
         function selectAll() {
-            $("input[name='service_logins[]']").prop("checked", "checked");
+            owQuery("input[name='service_logins[]']").prop("checked", "checked");
         }
 
         function selectNone() {
-            $("input[name='service_logins[]']").prop("checked", false);
+            owQuery("input[name='service_logins[]']").prop("checked", false);
         }
 
         function resize_iframe()
@@ -154,18 +173,23 @@ function ow_optionsAdmin()
             {
                 height = document.body.clientHeight;//IE
             }
-            document.getElementById("glu").style.height = parseInt(height -
-                    document.getElementById("glu").offsetTop - 8) + "px";
+            document.getElementById("glu").style.height = parseInt(height - document.getElementById("glu").offsetTop - 8) + "px";
         }
 
         window.onresize = resize_iframe;
     </script>
-
+	<style>
+		h3{margin-bottom: 0px;font-weight: 300 !important;color: #666;}
+		label{font-weight: normal !important;}
+	</style>
     <div class="wrap" style="
          padding: 10px;
          background: #fcfcfc;
          border: 1px solid #e5e5e5;
          font-size: 13px;
+         font-family: Helvetica, Arial, sans-serif !important;
+         line-height: 20px;
+         color: #333333 !important;
          ">
 
         <div class="ow_header" style="
@@ -175,11 +199,11 @@ function ow_optionsAdmin()
              margin: 0px;
              border-bottom: 1px solid #e5e5e5;
              background-color: #f0f0f0 !important;
-border-bottom: 1px solid #ccc;
-background-image: -o-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
-background-image: -moz-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
-background-image: -webkit-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
-background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+             border-bottom: 1px solid #ccc;
+             background-image: -o-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+             background-image: -moz-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+             background-image: -webkit-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
+             background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,242) 100%) !important;
              ">
             <a href="<?php echo SITE_URL; ?>" target="_blank"><img src="https://d5k6iufjynyu8.cloudfront.net/img/logo/logo.400.png" style="width: 175px;" /></a>  
             <?php
@@ -197,15 +221,16 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
             ?>
         </div>
         <?php if (get_option('ow_username') != "")
-        { ?>
+        {
+            ?>
             <ul style="margin-top: 25px; margin-left: 40px; float: right; position: absolute; right: 20px;">
                 <li style="margin: 5px; float: left;"><a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/my/dashboard" target="_blank">OnlyWire Dashboard</a></li>
                 <li style="margin: 5px; float: left;"><a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/add/network" target="_blank">Add/Remove Networks</a></li>
                 <li style="margin: 5px; float: left;"><a style="color: #f26722; text-decoration: underline;" href="<?php echo SITE_URL; ?>wordpress/support" target="_blank">Support</a></li>
             </ul>
-        <?php } ?>
+    <?php } ?>
         <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #e5e5e5; padding-bottom: 0px; margin-top: 10px; margin-left: 10px;">Settings</h2>
-        
+
         <?php
         if (!$userInfo->success)
         {
@@ -283,17 +308,19 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
               <?php wp_nonce_field('update-options'); ?>
               <?php
               $code_form = get_option('ow_script');
-              $temp      = explode("script>", $code_form);
               ?>
-            <input id="ow_script" type="hidden" name="ow_script" value="<?php echo $temp[4]; ?>" />
+            <input id="ow_script" type="hidden" name="ow_script" value="<?php echo $code_form; ?>" />
 
             <table class="form-table">
                 <tr>
                     <td colspan="2"><h3 style="margin-bottom: 0px;">Account Information</h3></td>
                 </tr>
                 <tr>
-                    <th style="white-space:nowrap; vertical-align: middle;" scope="row"><label for="ow_username">
-                     <?php _e("OnlyWire Username"); ?>:</label></th>
+                    <th style="white-space:nowrap; vertical-align: middle; padding-left: 20px;" scope="row">
+                    	<label for="ow_username">
+    						<?php _e("OnlyWire Username"); ?>:
+    					</label>
+    				</th>
                     <td><input id="ow_username" type="text" name="ow_username" value="<?php echo get_option('ow_username'); ?>" 
                                style="
                                background-color: #ffffff;
@@ -308,7 +335,7 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
                 </tr>
 
                 <tr valign="top">
-                    <th style="white-space:nowrap;vertical-align: middle;" scope="row"><label for="ow_password"><?php _e("OnlyWire Password"); ?>:</label></th>
+                    <th style="white-space:nowrap;vertical-align: middle;padding-left: 20px;" scope="row"><label for="ow_password"><?php _e("OnlyWire Password"); ?>:</label></th>
                     <td><input  id="ow_password" type="password" name="ow_password" value="<?php echo get_option('ow_password'); ?>" 
                                 style="
                                 background-color: #ffffff;
@@ -321,26 +348,26 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
                     </td>
                 </tr>
                 <tr valign="top">
-                    <th style="white-space:nowrap;" scope="row">
+                    <th style="white-space:nowrap;padding-left: 20px;vertical-align: middle;" scope="row">
                         <label for="ow_autopost"><?php _e("Auto Post All Articles"); ?>:<br/>
                             <span class="small-message" style="color: #999; font-weight: 300; font-size: 11px;">Post all newly created articles to the selected Networks.</span>
                         </label></th>
-                    <td><input id="ow_autopost" type="checkbox" name="ow_autopost" <?php
-                               if (get_option('ow_autopost') == 'on')
-                               {
-                                   echo 'checked="true"';
-                               }
-                               ?> /></td>
+                    <td><input id="ow_autopost" style="margin-top: -10px;" type="checkbox" name="ow_autopost" <?php
+                        if (get_option('ow_autopost') == 'on')
+                        {
+                            echo 'checked="true"';
+                        }
+                        ?> /></td>
                     <td style="width:100%;"></td>
                 </tr>
                 <tr valign="top">
-                    <th style="white-space:nowrap;" scope="row">
+                    <th style="white-space:nowrap;padding-left: 20px;" scope="row">
                         <label for="ow_autopost_enable">
-                        <?php _e("Show Bookmark & Share Button"); ?>:<br/>
-                            <span class="small-message" style="color: #999; font-weight: 300; font-size: 11px;">Display 'Bookmark & Share' Button under each article.</span>
+    						<?php _e("Show OnlyWire Share Button"); ?>:<br/>
+                            <span class="small-message" style="color: #999; font-weight: 300; font-size: 11px;">Display 'OnlyWire Share' Button under each article.</span>
                         </label>
                     </th>
-                    <td style="vertical-align: bottom;"><input id="ow_autopost_enable" type="checkbox" name="ow_autopost_enable" <?php
+                    <td style="vertical-align: bottom;"><input id="ow_autopost_enable" style="margin-top: -30px;" type="checkbox" name="ow_autopost_enable" <?php
                         if (get_option('ow_autopost_enable') == 'on')
                         {
                             echo 'checked="true"';
@@ -354,53 +381,53 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
                     <td colspan="3">
                         <h3 style="margin-bottom: 5px;">Networks ( <a style="color: #f26722; text-decoration: underline; font-weight: normal; font-size: 13px;" href="<?php echo SITE_URL; ?>wordpress/add/network" target="_blank">Manage</a> )</h3> 
 
-    <?php
-    $data = getServiceLogins(get_option('ow_username'), get_option('ow_password'));
+                        <?php
+                        $data = getServiceLogins(get_option('ow_username'), get_option('ow_password'));
 
-    if (count($data->networks) > 0)
-    {
-        ?>
-                            <a href="#" onclick="selectNone();">Deselect All</a>&nbsp;&nbsp;&nbsp;
-                            <a href="#" onclick="selectAll();">Select All</a>
-                            <div id="service_logins">
-                                    <?php
-                                    foreach ($data->networks as $network)
-                                    {
-                                        ?>
+                        if (count($data->networks) > 0)
+                        {
+                            ?>
+                            <a href="javascript: void(0);" onclick="selectNone();">Deselect All</a>&nbsp;&nbsp;&nbsp;
+                            <a href="javascript: void(0);" onclick="selectAll();">Select All</a>
+                            <div id="service_logins" style="margin-top: 20px;">
+                                <?php
+                                foreach ($data->networks as $network)
+                                {
+                                    ?>
 
                                     <div class="checkbox-wrap" style="display: block; float: left; width: 300px; margin: 10px;">
                                         <input type="checkbox" id="<?php echo $network->id; ?>" name="service_logins[]"
-            <?php
-            $temp = explode(",", get_option('ow_service_logins'));
-            if (in_array($network->id, $temp))
-            {
-                echo " checked ";
-            }
-            ?>
+                                        <?php
+                                        $temp = explode(",", get_option('ow_service_logins'));
+                                        if (in_array($network->id, $temp))
+                                        {
+                                            echo " checked ";
+                                        }
+                                        ?>
                                                value="<?php echo $network->id; ?>" style="float:left; margin: 5px 0px 5px 5px;"/>  
                                         <div class="label-wrap" style="display: block; width: 250px;float: left;margin-left: 10px;">
                                             <label for="<?php echo $network->id; ?>" style="font-weight: bold; margin-bottom: -5px; display: block; float: left;width: 300px;min-height: 60px;">
-                                                <img for="<?php echo $network->id; ?>" src="<?php echo $network->icon; ?>" style="float: left; width: 40px; margin: 5px;"/>
-                                                    <?php echo $network->name ?>
+                                                <img for="<?php echo $network->id; ?>" src="<?php echo $network->icon; ?>" style="float: left; width: 40px; margin: 5px;border-radius: 50px;border: 5px solid #e5e5e5;box-shadow: 0px 0px 3px 1px #999;margin-top: -10px;"/>
+            <?php echo $network->name ?>
                                                 <br/>
-                                                <span style="margin-top: -5px;float: left;color: #999; font-weight: 300;text-overflow: ellipsis;white-space: nowrap;overflow: hidden; width: 50%"><?php echo $network->description; ?></span> <br/>
+                                                <span style="margin-top: 0px;float: left;color: #999; font-weight: 300;text-overflow: ellipsis;white-space: nowrap;overflow: hidden; width: 50%;font-size: 12px;"><?php echo $network->description; ?></span> <br/>
                                                 <span style="margin-top: -10px;font-weight: normal; color: #d83526; font-size: 12px; float: left;"> 
                                                     <?
                                                     if ($network->status != NULL)
                                                     {
                                                         ?>
                                                         Incorrect login. <a href="<?php echo SITE_URL; ?>wordpress/correct/login/<?php echo $network->id; ?>" target="_blank" style="text-decoration: underline;">Correct it</a> 
-                                        <?php
-                                    }
-                                    ?>
+                                                        <?php
+                                                    }
+                                                    ?>
                                                 </span>
                                             </label> 
                                         </div>
                                     </div>
 
-                                <?php
-                            }
-                            ?>
+                                    <?php
+                                }
+                                ?>
                             </div>    
                             <?php
                         }
@@ -408,11 +435,11 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
                         {
                             ?>
                             <div class="no-networks" style="width: 98%; border: 1px solid #e5e5e5; padding: 20px; text-align: left; font-size: 13px; ">Please add your username and password above to see your networks</div>
-        <?php
-    }
-    else
-    {
-        ?>
+                            <?php
+                        }
+                        else
+                        {
+                            ?>
 
                             <div class="no-networks" style="width: 98%; border: 1px solid #e5e5e5; padding: 20px; text-align: left; font-size: 13px; ">
 
@@ -444,9 +471,9 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
 
                             </div>
 
-        <?php
-    }
-    ?>
+                            <?php
+                        }
+                        ?>
 
                     </td>
                 </tr>
@@ -459,25 +486,30 @@ background-image: -ms-linear-gradient(90deg , rgb(227,227,227) 0%, rgb(242,242,2
 
             <p class="submit">
                 <input type="submit" style="
-                       background: #f26722;
-                       -moz-border-radius: 3px;
-                       -webkit-border-radius: 3px;
-                       border-radius: 3px;
-                       border: 1px solid #d83526;
-                       display: inline-block;
-                       color: #ffffff !important;
-                       font-size: 13px;
-                       padding: 2px 10px;
-                       text-decoration: none;
-                       font-weight: 300;
-                       text-shadow: none;
-                       min-width: 60px;
-                       text-align: center;
-                       -webkit-box-shadow: none;
-                       box-shadow: none;
-                       height: auto;
-                       -moz-box-shadow: none;
-                       " class="button-primary" value="<?php _e('Save Changes') ?>" />
+                    background: #f26722;
+					-moz-border-radius: 3px;
+					-webkit-border-radius: 3px;
+					border-radius: 3px;
+					border: 1px solid #d83526;
+					display: inline-block;
+					color: #ffffff !important;
+					font-size: 13px;
+					padding: 2px 10px;
+					text-decoration: none;
+					font-weight: 300;
+					text-shadow: none;
+					min-width: 60px;
+					text-align: center;
+					-webkit-box-shadow: none;
+					box-shadow: none;
+					height: auto;
+					-moz-box-shadow: none;
+					margin: 10px auto;
+					width: 130px;
+					float: none;
+					display: block;
+					text-align: center;
+               	" class="button-primary" value="<?php _e('Save Changes') ?>" />
             </p>
         </form>
 
@@ -556,7 +588,7 @@ function ow_posting()
                 {
                     ?>
                     <label for="ow_post">
-                        <input type="checkbox" <?php echo get_option('ow_autopost_revisions_now') == 'on' ? 'checked="checked"' : ''; ?> id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
+                        <input type="checkbox" id="ow_post" name="ow_post" /> Post this revision to OnlyWire	
                     </label>
 
                     <?php
@@ -609,9 +641,8 @@ function ow_posting()
                 </div>
                 <?
             }
+        }
     }
-    }
-    
 }
 
 /**
@@ -649,31 +680,31 @@ function ow_post($postID)
             $post      = get_post($postID);
             $tagstring = "";
             $prefix    = '';
-		
-			if(get_the_tags($post->ID))
-			{
-            foreach (get_the_tags($post->ID) as $tag)
+
+            if (get_the_tags($post->ID))
             {
-                $tagstring .= $prefix.str_replace(" ","-",trim($tag->name));
-                $prefix = ',';
-            }
+                foreach (get_the_tags($post->ID) as $tag)
+                {
+                    $tagstring .= $prefix.str_replace(" ", "-", trim($tag->name));
+                    $prefix = ',';
+                }
             }
 
-            $d                   = 'm\/d\/Y h\:i\:s T';
-            $data['url']         = urlencode(get_permalink($postID));
-            $data['title']       = trim(urlencode($post->post_title));
-            $data['tags']        = trim($tagstring);
-            $data['scheduled']   = urlencode(get_post_time($d, true, $post, false));
+            $d                 = 'm\/d\/Y h\:i\:s T';
+            $data['url']       = urlencode(get_permalink($postID));
+            $data['title']     = trim(urlencode($post->post_title));
+            $data['tags']      = trim($tagstring);
+            $data['scheduled'] = urlencode(get_post_time($d, true, $post, false));
 
             if (strlen(strip_tags($post->post_content)) > 250)
             {
                 $data['description'] = urlencode(substr(strip_tags($post->post_content), 0, 250)."...");
             }
-	    else
-	    {
-		$data['description'] = urlencode(strip_tags($post->post_content));
-	    }	
-		
+            else
+            {
+                $data['description'] = urlencode(strip_tags($post->post_content));
+            }
+
 
             if (get_option('ow_service_logins') != false)
             {
