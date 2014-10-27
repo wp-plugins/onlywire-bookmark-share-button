@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /*
   Plugin Name: OnlyWire for WordPress [OFFICIAL]
   Plugin URI: http://www.onlywire.com/
@@ -250,7 +250,7 @@ function ow_optionsAdmin()
                  border-color: #eed3d7;
                  margin-top: 10px;
                  ">
-                Please correct your OnlyWire Username/Password.
+                Please enter your OnlyWire Username/Password.
             </div>
 
             <?php
@@ -382,9 +382,10 @@ function ow_optionsAdmin()
                         <h3 style="margin-bottom: 5px;">Networks ( <a style="color: #f26722; text-decoration: underline; font-weight: normal; font-size: 13px;" href="<?php echo SITE_URL; ?>wordpress/add/network" target="_blank">Manage</a> )</h3> 
 
                         <?php
-                        $data = getServiceLogins(get_option('ow_username'), get_option('ow_password'));
-
-                        if (count($data->networks) > 0)
+                        if (get_option('ow_username') != "" && get_option('ow_password') != ""){
+                            $data = getServiceLogins(get_option('ow_username'), get_option('ow_password'));
+                        }
+                        if (isset($data) && count($data->networks) > 0)
                         {
                             ?>
                             <a href="javascript: void(0);" onclick="selectNone();">Deselect All</a>&nbsp;&nbsp;&nbsp;
@@ -412,7 +413,7 @@ function ow_optionsAdmin()
                                                 <br/>
                                                 <span style="margin-top: 0px;float: left;color: #999; font-weight: 300;text-overflow: ellipsis;white-space: nowrap;overflow: hidden; width: 50%;font-size: 12px;"><?php echo $network->description; ?></span> <br/>
                                                 <span style="margin-top: -10px;font-weight: normal; color: #d83526; font-size: 12px; float: left;"> 
-                                                    <?
+                                                    <?php
                                                     if ($network->status != NULL)
                                                     {
                                                         ?>
@@ -639,7 +640,7 @@ function ow_posting()
                        " class="button-primary" target="_blank">Add Network</a>
 
                 </div>
-                <?
+                <?php
             }
         }
     }
