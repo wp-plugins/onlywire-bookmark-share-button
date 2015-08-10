@@ -691,7 +691,7 @@ function ow_post($postID)
                 }
             }
 
-            $d                 = 'm\/d\/Y h\:i\:s T';
+            $d                 = 'c';
             $data['url']       = urlencode(get_permalink($postID));
             $data['title']     = trim(urlencode($post->post_title));
             $data['tags']      = trim($tagstring);
