@@ -4,7 +4,7 @@ Donate link: https://onlywire.com
 Tags: Facebook,twitter,social media solution,social media optimization,social media strategy,social media monitoring,social media marketing,social media campaigns,social media tracking,social media app,social media website,social media manager,social media service,social media automation,multiple twitter,multiple facebook,onlywire,social bookmarking,blogging,social media promotion 
 Requires at least: 3.0
 Tested up to: 4.0
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 
 OnlyWire is a fast, secure automation tool to submit content to the top Social Media Networks like Facebook, Twitter and Google+. Use OnlyWire to save time, automate your website's content and engage your followers.
 
