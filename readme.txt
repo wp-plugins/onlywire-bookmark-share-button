@@ -43,6 +43,12 @@ Visit our FAQ at https://www.onlywire.com/support/category/for/faq
 1. OnlyWire Settings page on your WordPress Admin Panel.
 
 == Changelog ==
+= 1.9.5 =
+* Minor bug fixes
+
+= 1.9.4 =
+* Minor bug fixes
+
 = 1.9.3 =
 * Minor bug fixes
 
